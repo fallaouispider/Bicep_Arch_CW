@@ -3646,6 +3646,572 @@ param apimServiceName = 'CW_APIM_DEV'  // Must be globally unique</code></pre>
                 </ul>
                 <p><strong>Recommendation:</strong> Add a unique suffix (region code, random string, or timestamp) to ensure global uniqueness.</p>
             </div>
+
+            <h3>Tagging Strategy</h3>
+            <p>Comprehensive tagging strategy for resource organization, cost tracking, and compliance:</p>
+            
+            <button class="collapsible">Mandatory Tags</button>
+            <div class="collapsible-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tag Name</th>
+                            <th>Description</th>
+                            <th>Example Value</th>
+                            <th>Applied To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Environment</code></td>
+                            <td>Deployment environment</td>
+                            <td>Development, Production</td>
+                            <td>All resources</td>
+                        </tr>
+                        <tr>
+                            <td><code>Project</code></td>
+                            <td>Project identifier</td>
+                            <td>CW</td>
+                            <td>All resources</td>
+                        </tr>
+                        <tr>
+                            <td><code>CostCenter</code></td>
+                            <td>Billing department</td>
+                            <td>IT-Development, IT-Production</td>
+                            <td>Resource groups</td>
+                        </tr>
+                        <tr>
+                            <td><code>Owner</code></td>
+                            <td>Responsible team/person</td>
+                            <td>dev-team@company.com</td>
+                            <td>Resource groups</td>
+                        </tr>
+                        <tr>
+                            <td><code>ManagedBy</code></td>
+                            <td>Management tool</td>
+                            <td>Bicep, Terraform, Portal</td>
+                            <td>All resources</td>
+                        </tr>
+                        <tr>
+                            <td><code>CreatedDate</code></td>
+                            <td>Resource creation date</td>
+                            <td>2026-01-15</td>
+                            <td>Resource groups</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="collapsible">Optional Tags</button>
+            <div class="collapsible-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tag Name</th>
+                            <th>Description</th>
+                            <th>Example Value</th>
+                            <th>Use Case</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Criticality</code></td>
+                            <td>Business criticality level</td>
+                            <td>Low, Medium, High, Critical</td>
+                            <td>Incident prioritization</td>
+                        </tr>
+                        <tr>
+                            <td><code>DataClassification</code></td>
+                            <td>Data sensitivity level</td>
+                            <td>Public, Internal, Confidential, Secret</td>
+                            <td>Compliance and security</td>
+                        </tr>
+                        <tr>
+                            <td><code>BusinessUnit</code></td>
+                            <td>Business division</td>
+                            <td>Engineering, Sales, Marketing</td>
+                            <td>Organizational structure</td>
+                        </tr>
+                        <tr>
+                            <td><code>Application</code></td>
+                            <td>Application name</td>
+                            <td>WebApplication, MobileAPI</td>
+                            <td>Application grouping</td>
+                        </tr>
+                        <tr>
+                            <td><code>SLA</code></td>
+                            <td>Service level agreement</td>
+                            <td>99.9, 99.95, 99.99</td>
+                            <td>Availability requirements</td>
+                        </tr>
+                        <tr>
+                            <td><code>BackupPolicy</code></td>
+                            <td>Backup frequency</td>
+                            <td>None, Daily, Weekly</td>
+                            <td>Disaster recovery</td>
+                        </tr>
+                        <tr>
+                            <td><code>MaintenanceWindow</code></td>
+                            <td>Allowed maintenance time</td>
+                            <td>Sat-02:00-06:00-UTC</td>
+                            <td>Change management</td>
+                        </tr>
+                        <tr>
+                            <td><code>ComplianceRequirement</code></td>
+                            <td>Regulatory requirements</td>
+                            <td>HIPAA, PCI-DSS, GDPR, SOC2</td>
+                            <td>Compliance auditing</td>
+                        </tr>
+                        <tr>
+                            <td><code>DisasterRecovery</code></td>
+                            <td>DR configuration</td>
+                            <td>None, Geo-Redundant, Active-Active</td>
+                            <td>Business continuity</td>
+                        </tr>
+                        <tr>
+                            <td><code>CostCode</code></td>
+                            <td>Financial tracking code</td>
+                            <td>CC-2026-001</td>
+                            <td>Detailed cost allocation</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>DNS and FQDN Patterns</h3>
+            <p>Fully Qualified Domain Names for publicly accessible resources:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Resource</th>
+                        <th>FQDN Pattern</th>
+                        <th>Development Example</th>
+                        <th>Production Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SQL Server</td>
+                        <td><code>{name}.database.windows.net</code></td>
+                        <td>cw-sqlsrv-dev.database.windows.net</td>
+                        <td>cw-sqlsrv-prod.database.windows.net</td>
+                    </tr>
+                    <tr>
+                        <td>Cosmos DB</td>
+                        <td><code>{name}.documents.azure.com</code></td>
+                        <td>cw-cosmos-dev.documents.azure.com</td>
+                        <td>cw-cosmos-prod.documents.azure.com</td>
+                    </tr>
+                    <tr>
+                        <td>Service Bus</td>
+                        <td><code>{name}.servicebus.windows.net</code></td>
+                        <td>cw-svcbus-dev.servicebus.windows.net</td>
+                        <td>cw-svcbus-prod.servicebus.windows.net</td>
+                    </tr>
+                    <tr>
+                        <td>API Management</td>
+                        <td><code>{name}.azure-api.net</code></td>
+                        <td>cw-apim-dev.azure-api.net</td>
+                        <td>cw-apim-prod.azure-api.net</td>
+                    </tr>
+                    <tr>
+                        <td>API Management (Custom)</td>
+                        <td><code>api.{domain}</code></td>
+                        <td>api-dev.contoso.com</td>
+                        <td>api.contoso.com</td>
+                    </tr>
+                    <tr>
+                        <td>Application Gateway</td>
+                        <td><code>{pip-dns}.{region}.cloudapp.azure.com</code></td>
+                        <td>cw-appgw-dev.eastus2.cloudapp.azure.com</td>
+                        <td>cw-appgw-prod.eastus2.cloudapp.azure.com</td>
+                    </tr>
+                    <tr>
+                        <td>App Gateway (Custom)</td>
+                        <td><code>www.{domain}</code></td>
+                        <td>www-dev.contoso.com</td>
+                        <td>www.contoso.com</td>
+                    </tr>
+                    <tr>
+                        <td>Key Vault</td>
+                        <td><code>{name}.vault.azure.net</code></td>
+                        <td>cw-kv-dev.vault.azure.net</td>
+                        <td>cw-kv-prod.vault.azure.net</td>
+                    </tr>
+                    <tr>
+                        <td>Storage Account (Blob)</td>
+                        <td><code>{name}.blob.core.windows.net</code></td>
+                        <td>cwsadiagdev.blob.core.windows.net</td>
+                        <td>cwsadiagprod.blob.core.windows.net</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Lifecycle Management Resources</h3>
+            <p>Naming conventions for backup, snapshot, and recovery resources:</p>
+            
+            <button class="collapsible">Backup and Snapshot Resources</button>
+            <div class="collapsible-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resource Type</th>
+                            <th>Naming Pattern</th>
+                            <th>Example</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Recovery Services Vault</td>
+                            <td><code>CW_RSV_{ENV}</code></td>
+                            <td>CW_RSV_DEV</td>
+                            <td>For VM and database backups</td>
+                        </tr>
+                        <tr>
+                            <td>Backup Policy</td>
+                            <td><code>CW_BP_{TYPE}_{ENV}</code></td>
+                            <td>CW_BP_DAILY_PROD</td>
+                            <td>Daily, Weekly, Monthly</td>
+                        </tr>
+                        <tr>
+                            <td>Disk Snapshot</td>
+                            <td><code>CW_SNAP_{DISK}_{YYYYMMDD}</code></td>
+                            <td>CW_SNAP_AKSDISK_20260115</td>
+                            <td>Include timestamp</td>
+                        </tr>
+                        <tr>
+                            <td>SQL Point-in-Time</td>
+                            <td><code>CW_SQLDB_{NAME}_PITR_{YYYYMMDD}</code></td>
+                            <td>CW_SQLDB_CWDB_PITR_20260115</td>
+                            <td>Point-in-time restore</td>
+                        </tr>
+                        <tr>
+                            <td>Backup Storage Account</td>
+                            <td><code>cwsabk{env}{random}</code></td>
+                            <td>cwsabkdev7x3k</td>
+                            <td>For custom backups</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="collapsible">Disaster Recovery Resources</button>
+            <div class="collapsible-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resource Type</th>
+                            <th>Naming Pattern</th>
+                            <th>Example</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DR Resource Group</td>
+                            <td><code>CW_RG_{ENV}_DR</code></td>
+                            <td>CW_RG_PROD_DR</td>
+                            <td>Secondary region resources</td>
+                        </tr>
+                        <tr>
+                            <td>DR VNet</td>
+                            <td><code>CW_VNET_{ENV}_DR</code></td>
+                            <td>CW_VNET_PROD_DR</td>
+                            <td>Disaster recovery network</td>
+                        </tr>
+                        <tr>
+                            <td>SQL Failover Group</td>
+                            <td><code>CW_SQLFG_{ENV}</code></td>
+                            <td>CW_SQLFG_PROD</td>
+                            <td>Automatic SQL failover</td>
+                        </tr>
+                        <tr>
+                            <td>Cosmos DB Secondary</td>
+                            <td><code>CW_COSMOS_{ENV}_WUS2</code></td>
+                            <td>CW_COSMOS_PROD_WUS2</td>
+                            <td>West US 2 replica</td>
+                        </tr>
+                        <tr>
+                            <td>Traffic Manager</td>
+                            <td><code>CW_TM_{ENV}</code></td>
+                            <td>CW_TM_PROD</td>
+                            <td>Multi-region routing</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Resource Naming Validation Rules</h3>
+            
+            <button class="collapsible">Azure Resource Naming Constraints</button>
+            <div class="collapsible-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resource Type</th>
+                            <th>Min Length</th>
+                            <th>Max Length</th>
+                            <th>Valid Characters</th>
+                            <th>Case Sensitivity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Resource Group</td>
+                            <td>1</td>
+                            <td>90</td>
+                            <td>Alphanumeric, underscore, hyphen, period, parentheses</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>Storage Account</td>
+                            <td>3</td>
+                            <td>24</td>
+                            <td>Lowercase letters and numbers only</td>
+                            <td>Lowercase only</td>
+                        </tr>
+                        <tr>
+                            <td>Virtual Network</td>
+                            <td>2</td>
+                            <td>64</td>
+                            <td>Alphanumeric, underscore, hyphen, period</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>AKS Cluster</td>
+                            <td>1</td>
+                            <td>63</td>
+                            <td>Alphanumeric and hyphen</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>SQL Server</td>
+                            <td>1</td>
+                            <td>63</td>
+                            <td>Lowercase letters, numbers, hyphen (not at start/end)</td>
+                            <td>Lowercase only</td>
+                        </tr>
+                        <tr>
+                            <td>SQL Database</td>
+                            <td>1</td>
+                            <td>128</td>
+                            <td>Most characters except <>*%&:\\/? or control chars</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>Cosmos DB</td>
+                            <td>3</td>
+                            <td>44</td>
+                            <td>Lowercase letters, numbers, hyphen</td>
+                            <td>Lowercase only</td>
+                        </tr>
+                        <tr>
+                            <td>Service Bus</td>
+                            <td>6</td>
+                            <td>50</td>
+                            <td>Alphanumeric and hyphen</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>Key Vault</td>
+                            <td>3</td>
+                            <td>24</td>
+                            <td>Alphanumeric and hyphen (start with letter)</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>API Management</td>
+                            <td>1</td>
+                            <td>50</td>
+                            <td>Alphanumeric and hyphen (start with letter)</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>App Gateway</td>
+                            <td>1</td>
+                            <td>80</td>
+                            <td>Alphanumeric, underscore, hyphen, period</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                        <tr>
+                            <td>Public IP</td>
+                            <td>1</td>
+                            <td>80</td>
+                            <td>Alphanumeric, underscore, hyphen, period</td>
+                            <td>Case-insensitive</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Multi-Instance Naming Patterns</h3>
+            <p>For resources requiring multiple instances or regional deployments:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Pattern</th>
+                        <th>Examples</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Multiple AKS Node Pools</td>
+                        <td><code>{cluster}-{purpose}</code></td>
+                        <td>
+                            agentpool (system)<br/>
+                            userpool (user workloads)<br/>
+                            gpupool (ML workloads)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Multiple Subnets</td>
+                        <td><code>CW_SUBNET_{PURPOSE}_{ENV}</code></td>
+                        <td>
+                            CW_SUBNET_WORK_DEV<br/>
+                            CW_SUBNET_APPGW_DEV<br/>
+                            CW_SUBNET_DB_DEV
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Multiple Databases</td>
+                        <td><code>CW_SQLDB_{NAME}_{ENV}</code></td>
+                        <td>
+                            CW_SQLDB_CWDB_DEV<br/>
+                            CW_SQLDB_UTIL_DEV<br/>
+                            CW_SQLDB_EMEA_DEV
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Multi-Region Deployment</td>
+                        <td><code>CW_{RESOURCE}_{ENV}_{REGION}</code></td>
+                        <td>
+                            CW_AKS_PROD_EUS2<br/>
+                            CW_AKS_PROD_WUS2<br/>
+                            CW_AKS_PROD_CUS
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Numbered Instances</td>
+                        <td><code>CW_{RESOURCE}_{ENV}_{NN}</code></td>
+                        <td>
+                            CW_VNET_DEV_01<br/>
+                            CW_VNET_DEV_02<br/>
+                            CW_VNET_DEV_03
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Application-Specific</td>
+                        <td><code>CW_{RESOURCE}_{APP}_{ENV}</code></td>
+                        <td>
+                            CW_AKS_WEB_DEV<br/>
+                            CW_AKS_API_DEV<br/>
+                            CW_AKS_BATCH_DEV
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Naming Convention Exceptions</h3>
+            <div class="card">
+                <h4>Documented Exceptions</h4>
+                <p>Cases where standard naming cannot be applied:</p>
+                <ul>
+                    <li><strong>Legacy Resources:</strong> Existing resources that predate the naming standard (document in inventory)</li>
+                    <li><strong>Third-Party Integrations:</strong> External services requiring specific naming patterns</li>
+                    <li><strong>Azure Limitations:</strong> Services with restrictive naming requirements (e.g., Storage Accounts)</li>
+                    <li><strong>Global Uniqueness:</strong> When preferred name is taken, add suffix: <code>CW_SQLSRV_DEV_EUS2</code></li>
+                    <li><strong>Kubernetes Resources:</strong> Follow k8s conventions (lowercase, hyphen-separated): <code>cw-web-app-dev</code></li>
+                </ul>
+            </div>
+
+            <h3>Implementation Checklist</h3>
+            <div class="card">
+                <h4>✅ Naming Standard Adoption Steps</h4>
+                <ol>
+                    <li>✓ Review and approve naming convention with stakeholders</li>
+                    <li>✓ Update Bicep parameter files (<code>main.dev.bicepparam</code>, <code>main.prod.bicepparam</code>)</li>
+                    <li>✓ Validate names against Azure constraints (length, characters, uniqueness)</li>
+                    <li>✓ Test deployment in development environment</li>
+                    <li>✓ Document any exceptions or deviations in README</li>
+                    <li>✓ Create resource naming validation script (PowerShell/Python)</li>
+                    <li>✓ Update CI/CD pipelines with naming validation</li>
+                    <li>✓ Apply mandatory tags to all resources</li>
+                    <li>✓ Create Azure Policy for naming enforcement (optional)</li>
+                    <li>✓ Train team members on naming standards</li>
+                    <li>✓ Schedule quarterly review of naming conventions</li>
+                </ol>
+            </div>
+
+            <h3>Naming Validation Script Example</h3>
+            <pre><code># PowerShell script to validate CW naming convention
+function Test-CWNamingConvention {
+    param(
+        [string]$ResourceName,
+        [string]$ResourceType,
+        [string]$Environment
+    )
+    
+    # Expected pattern: CW_{RESOURCE}_{ENV}
+    $pattern = "^CW_[A-Z]+_(DEV|PROD)$"
+    
+    if ($ResourceName -notmatch $pattern) {
+        Write-Warning "Resource '$ResourceName' does not follow CW naming convention"
+        return $false
+    }
+    
+    # Check environment suffix
+    if ($ResourceName -notlike "*_$Environment") {
+        Write-Warning "Resource '$ResourceName' does not match environment '$Environment'"
+        return $false
+    }
+    
+    # Check resource-specific constraints
+    switch ($ResourceType) {
+        "StorageAccount" {
+            if ($ResourceName -cmatch '[A-Z_]') {
+                Write-Error "Storage Account must be lowercase alphanumeric only"
+                return $false
+            }
+            if ($ResourceName.Length -gt 24) {
+                Write-Error "Storage Account name exceeds 24 characters"
+                return $false
+            }
+        }
+        "KeyVault" {
+            if ($ResourceName.Length -gt 24) {
+                Write-Error "Key Vault name exceeds 24 characters"
+                return $false
+            }
+        }
+        "SqlServer" {
+            if ($ResourceName -cnotmatch '^[a-z]') {
+                Write-Error "SQL Server must start with lowercase letter"
+                return $false
+            }
+        }
+    }
+    
+    Write-Host "✓ Resource name '$ResourceName' is valid" -ForegroundColor Green
+    return $true
+}
+
+# Example usage
+Test-CWNamingConvention -ResourceName "CW_AKS_DEV" -ResourceType "AKS" -Environment "DEV"
+Test-CWNamingConvention -ResourceName "cwsadiagdev" -ResourceType "StorageAccount" -Environment "DEV"</code></pre>
+
+            <div class="info-box">
+                <h4>🔗 Additional Resources</h4>
+                <ul>
+                    <li><a href="https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming" target="_blank">Azure Naming Conventions - Cloud Adoption Framework</a></li>
+                    <li><a href="https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules" target="_blank">Azure Resource Naming Rules and Restrictions</a></li>
+                    <li><a href="https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations" target="_blank">Recommended Abbreviations for Azure Resources</a></li>
+                    <li><a href="https://learn.microsoft.com/azure/governance/policy/samples/pattern-tags" target="_blank">Azure Policy for Tag Governance</a></li>
+                </ul>
+            </div>
         </section>
     </div>
 

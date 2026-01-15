@@ -238,20 +238,31 @@ var locationShort = {
   ukwest: 'ukw'
 }[location]
 
-// Resource naming following Azure naming conventions
-var resourceGroupName = 'rg-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var vnetName = 'vnet-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var subnetName = 'snet-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var appGatewaySubnetName = 'snet-appgw-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var nsgName = 'nsg-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var cosmosDbAccountName = 'cosmos-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var serviceBusNamespaceName = 'sb-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var sqlServerName = 'sql-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var appGatewayName = 'appgw-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var appGatewayPublicIpName = 'pip-appgw-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var aksClusterName = 'aks-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var aksDnsPrefix = '${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
-var apimName = 'apim-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
+// Resource naming following CW naming convention: CW_{RESOURCE}_{ENV}
+// Note: Some resources require lowercase for global uniqueness (SQL, Cosmos, Service Bus, APIM)
+var envUpper = toUpper(environmentType)
+var projectPrefix = toUpper(workloadName)
+
+// Resource Group and Networking (uppercase with underscores)
+var resourceGroupName = '${projectPrefix}_RG_${envUpper}'
+var vnetName = '${projectPrefix}_VNET_${envUpper}'
+var subnetName = '${projectPrefix}_SUBNET_WORK_${envUpper}'
+var appGatewaySubnetName = '${projectPrefix}_SUBNET_APPGW_${envUpper}'
+var nsgName = '${projectPrefix}_NSG_WORK_${envUpper}'
+var appGatewayName = '${projectPrefix}_APPGW_${envUpper}'
+var appGatewayPublicIpName = '${projectPrefix}_PIP_APPGW_${envUpper}'
+
+// Compute (case-insensitive, but using uppercase for consistency)
+var aksClusterName = '${projectPrefix}_AKS_${envUpper}'
+var aksDnsPrefix = '${toLower(workloadName)}-aks-${environmentType}'
+
+// Databases (must be lowercase, globally unique - adding location suffix for uniqueness)
+var cosmosDbAccountName = toLower('${workloadName}-cosmos-${environmentType}-${locationShort}')
+var sqlServerName = toLower('${workloadName}-sqlsrv-${environmentType}-${locationShort}')
+
+// Messaging & Integration (globally unique - using lowercase with hyphens)
+var serviceBusNamespaceName = toLower('${workloadName}-svcbus-${environmentType}-${locationShort}')
+var apimName = toLower('${workloadName}-apim-${environmentType}-${locationShort}')
 
 // Merge default tags with user-provided tags
 var defaultTags = {

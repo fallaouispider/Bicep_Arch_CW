@@ -10,8 +10,11 @@ using './main.bicep'
 // =========================================
 // WORKLOAD CONFIGURATION
 // =========================================
+// Updated to follow CW naming convention: CW_{RESOURCE}_{ENV}
+// For globally unique resources, using lowercase: cw-{resource}-{env}
+// =========================================
 
-param workloadName = 'webapp'
+param workloadName = 'cw'
 param environmentType = 'dev'
 param location = 'eastus2'
 param instanceNumber = '001'
