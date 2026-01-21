@@ -102,9 +102,6 @@ param serviceCidr string = '10.2.0.0/16'
 @description('DNS service IP address')
 param dnsServiceIP string = '10.2.0.10'
 
-@description('Docker bridge CIDR')
-param dockerBridgeCidr string = '172.17.0.1/16'
-
 @description('Enable AGIC addon')
 param enableAGIC bool = true
 
@@ -172,7 +169,6 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-01-01' = {
       networkPolicy: networkPolicy
       serviceCidr: serviceCidr
       dnsServiceIP: dnsServiceIP
-      dockerBridgeCidr: dockerBridgeCidr
       loadBalancerSku: 'standard'
       outboundType: 'loadBalancer'
     }

@@ -405,12 +405,6 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' = {
           location
         ]
       }
-      {
-        service: 'Microsoft.ApiManagement'
-        locations: [
-          location
-        ]
-      }
     ]
   }
 }

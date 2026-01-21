@@ -48,6 +48,9 @@ param enablePrivateEndpoint bool = true
 @description('Tags to apply to all resources')
 param tags object = {}
 
+@description('Enable Transparent Data Encryption for databases')
+param enableTDE bool = false
+
 @description('Enable diagnostic settings')
 param enableDiagnostics bool = false
 
@@ -144,7 +147,7 @@ resource sqlDatabases 'Microsoft.Sql/servers/databases@2023-05-01-preview' = [fo
 }]
 
 @description('Transparent Data Encryption for databases')
-resource sqlDatabaseTDE 'Microsoft.Sql/servers/databases/transparentDataEncryption@2023-05-01-preview' = [for (database, i) in databases: {
+resource sqlDatabaseTDE 'Microsoft.Sql/servers/databases/transparentDataEncryption@2023-05-01-preview' = [for (database, i) in databases: if (enableTDE) {
   name: 'current'
   parent: sqlDatabases[i]
   properties: {

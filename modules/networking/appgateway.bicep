@@ -201,7 +201,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2023-11-01' =
           port: 80
           protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
-          pickHostNameFromBackendAddress: false
+          pickHostNameFromBackendAddress: true
           requestTimeout: requestTimeout
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', appGatewayName, probeName)

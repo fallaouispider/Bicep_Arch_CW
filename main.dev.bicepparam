@@ -169,7 +169,7 @@ param enableWaf = false
 // =========================================
 
 param deployAKS = true
-param kubernetesVersion = '1.29.0'
+param kubernetesVersion = '1.32'
 param aksNodeVmSize = 'Standard_D2s_v3'
 param aksNodeCount = 2
 param enableAksAutoScaling = true

@@ -257,7 +257,6 @@ var apimName = 'apim-${workloadName}-${environmentType}-${locationShort}-${insta
 var defaultTags = {
   Environment: environmentType
   ManagedBy: 'Bicep'
-  DeploymentDate: utcNow('yyyy-MM-dd')
   Location: location
 }
 

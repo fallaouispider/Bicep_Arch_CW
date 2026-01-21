@@ -1,0 +1,4255 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.39.26.7824",
+      "templateHash": "16988328806326336131"
+    },
+    "description": "Main orchestration template for Azure networking infrastructure",
+    "version": "1.0.0"
+  },
+  "parameters": {
+    "workloadName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 15,
+      "metadata": {
+        "description": "The workload name for the resources (e.g., webapp, api, database)"
+      }
+    },
+    "environmentType": {
+      "type": "string",
+      "allowedValues": [
+        "dev",
+        "test",
+        "staging",
+        "prod"
+      ],
+      "metadata": {
+        "description": "The environment type for the deployment"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[deployment().location]",
+      "metadata": {
+        "description": "Azure region for all resources. Defaults to deployment location."
+      }
+    },
+    "instanceNumber": {
+      "type": "string",
+      "defaultValue": "001",
+      "minLength": 3,
+      "maxLength": 3,
+      "metadata": {
+        "description": "The instance number for resource differentiation"
+      }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network address space in CIDR notation"
+      }
+    },
+    "subnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet address space in CIDR notation"
+      }
+    },
+    "appGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Application Gateway subnet address space in CIDR notation"
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Tags to apply to all resources"
+      }
+    },
+    "enableDiagnostics": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable diagnostic settings for network resources"
+      }
+    },
+    "logAnalyticsWorkspaceId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Log Analytics Workspace ID for diagnostics (required if enableDiagnostics is true)"
+      }
+    },
+    "deployCosmosDb": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy Azure Cosmos DB NoSQL Serverless"
+      }
+    },
+    "cosmosDbDatabaseName": {
+      "type": "string",
+      "defaultValue": "appdb",
+      "metadata": {
+        "description": "Name of the Cosmos DB database"
+      }
+    },
+    "cosmosDbContainers": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Array of Cosmos DB containers to create"
+      }
+    },
+    "enableCosmosDbPrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable private endpoint for Cosmos DB"
+      }
+    },
+    "enableCosmosDbFreeTier": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable free tier for Cosmos DB (only one per subscription)"
+      }
+    },
+    "deployServiceBus": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy Azure Service Bus"
+      }
+    },
+    "serviceBusSku": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "Service Bus SKU tier"
+      }
+    },
+    "serviceBusQueues": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Array of Service Bus queues to create"
+      }
+    },
+    "serviceBusTopics": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Array of Service Bus topics to create"
+      }
+    },
+    "enableServiceBusPrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable private endpoint for Service Bus (requires Premium SKU)"
+      }
+    },
+    "serviceBusZoneRedundant": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable zone redundancy for Service Bus (Premium SKU only)"
+      }
+    },
+    "deploySqlServer": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy Azure SQL Server"
+      }
+    },
+    "sqlServerAdminLogin": {
+      "type": "string",
+      "defaultValue": "sqladmin",
+      "metadata": {
+        "description": "SQL Server administrator login username"
+      }
+    },
+    "sqlServerAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SQL Server administrator login password"
+      }
+    },
+    "sqlDatabases": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Array of SQL databases to create"
+      }
+    },
+    "enableSqlServerPrivateEndpoint": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable private endpoint for SQL Server"
+      }
+    },
+    "sqlServerPublicNetworkAccess": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable public network access for SQL Server"
+      }
+    },
+    "sqlServerEntraAdminObjectId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Microsoft Entra admin object ID for SQL Server"
+      }
+    },
+    "sqlServerEntraAdminLogin": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Microsoft Entra admin login name for SQL Server"
+      }
+    },
+    "deployAppGateway": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy Application Gateway"
+      }
+    },
+    "appGatewaySku": {
+      "type": "string",
+      "defaultValue": "Standard_v2",
+      "allowedValues": [
+        "Standard_v2",
+        "WAF_v2"
+      ],
+      "metadata": {
+        "description": "Application Gateway SKU name"
+      }
+    },
+    "appGatewayMinCapacity": {
+      "type": "int",
+      "defaultValue": 0,
+      "minValue": 0,
+      "maxValue": 125,
+      "metadata": {
+        "description": "Minimum capacity units for Application Gateway autoscaling"
+      }
+    },
+    "appGatewayMaxCapacity": {
+      "type": "int",
+      "defaultValue": 10,
+      "minValue": 2,
+      "maxValue": 125,
+      "metadata": {
+        "description": "Maximum capacity units for Application Gateway autoscaling"
+      }
+    },
+    "enableWaf": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable Web Application Firewall"
+      }
+    },
+    "deployAKS": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy Azure Kubernetes Service"
+      }
+    },
+    "kubernetesVersion": {
+      "type": "string",
+      "defaultValue": "1.29.0",
+      "metadata": {
+        "description": "Kubernetes version"
+      }
+    },
+    "aksNodeVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2s_v3",
+      "metadata": {
+        "description": "AKS node pool VM size"
+      }
+    },
+    "aksNodeCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "minValue": 1,
+      "maxValue": 100,
+      "metadata": {
+        "description": "AKS node count"
+      }
+    },
+    "enableAksAutoScaling": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable AKS auto-scaling"
+      }
+    },
+    "aksMinNodeCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 100,
+      "metadata": {
+        "description": "AKS minimum node count for auto-scaling"
+      }
+    },
+    "aksMaxNodeCount": {
+      "type": "int",
+      "defaultValue": 5,
+      "minValue": 1,
+      "maxValue": 1000,
+      "metadata": {
+        "description": "AKS maximum node count for auto-scaling"
+      }
+    },
+    "aksServiceCidr": {
+      "type": "string",
+      "defaultValue": "10.2.0.0/16",
+      "metadata": {
+        "description": "AKS service CIDR"
+      }
+    },
+    "aksDnsServiceIP": {
+      "type": "string",
+      "defaultValue": "10.2.0.10",
+      "metadata": {
+        "description": "AKS DNS service IP"
+      }
+    },
+    "enableAGIC": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable AGIC addon for AKS"
+      }
+    },
+    "enableAksMonitoring": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable Azure Monitor for AKS"
+      }
+    },
+    "aksSku": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Free",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "AKS SKU tier"
+      }
+    },
+    "deployApiManagement": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Deploy API Management"
+      }
+    },
+    "apimSku": {
+      "type": "string",
+      "defaultValue": "Developer",
+      "allowedValues": [
+        "Consumption",
+        "Developer",
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "API Management SKU"
+      }
+    },
+    "apimCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 0,
+      "maxValue": 12,
+      "metadata": {
+        "description": "API Management SKU capacity"
+      }
+    },
+    "apimPublisherEmail": {
+      "type": "string",
+      "defaultValue": "admin@contoso.com",
+      "metadata": {
+        "description": "API Management publisher email"
+      }
+    },
+    "apimPublisherName": {
+      "type": "string",
+      "defaultValue": "Contoso",
+      "metadata": {
+        "description": "API Management publisher name"
+      }
+    },
+    "apimVirtualNetworkType": {
+      "type": "string",
+      "defaultValue": "External",
+      "allowedValues": [
+        "None",
+        "External",
+        "Internal"
+      ],
+      "metadata": {
+        "description": "API Management VNet type"
+      }
+    }
+  },
+  "variables": {
+    "locationShort": "[createObject('eastus', 'eus', 'eastus2', 'eus2', 'westus', 'wus', 'westus2', 'wus2', 'centralus', 'cus', 'northeurope', 'neu', 'westeurope', 'weu', 'uksouth', 'uks', 'ukwest', 'ukw')[parameters('location')]]",
+    "resourceGroupName": "[format('rg-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "vnetName": "[format('vnet-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "subnetName": "[format('snet-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "appGatewaySubnetName": "[format('snet-appgw-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "nsgName": "[format('nsg-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "cosmosDbAccountName": "[format('cosmos-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "serviceBusNamespaceName": "[format('sb-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "sqlServerName": "[format('sql-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "appGatewayName": "[format('appgw-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "appGatewayPublicIpName": "[format('pip-appgw-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "aksClusterName": "[format('aks-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "aksDnsPrefix": "[format('{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "apimName": "[format('apim-{0}-{1}-{2}-{3}', parameters('workloadName'), parameters('environmentType'), variables('locationShort'), parameters('instanceNumber'))]",
+    "defaultTags": {
+      "Environment": "[parameters('environmentType')]",
+      "ManagedBy": "Bicep",
+      "Location": "[parameters('location')]"
+    },
+    "allTags": "[union(variables('defaultTags'), parameters('tags'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2024-03-01",
+      "name": "[variables('resourceGroupName')]",
+      "location": "[parameters('location')]",
+      "tags": "[variables('allTags')]",
+      "metadata": {
+        "description": "Create Resource Group for all networking resources"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "vnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('vnetAddressPrefix')]"
+          },
+          "subnetName": {
+            "value": "[variables('subnetName')]"
+          },
+          "subnetAddressPrefix": {
+            "value": "[parameters('subnetAddressPrefix')]"
+          },
+          "appGatewaySubnetName": {
+            "value": "[variables('appGatewaySubnetName')]"
+          },
+          "appGatewaySubnetAddressPrefix": {
+            "value": "[parameters('appGatewaySubnetAddressPrefix')]"
+          },
+          "nsgName": {
+            "value": "[variables('nsgName')]"
+          },
+          "tags": {
+            "value": "[variables('allTags')]"
+          },
+          "enableDiagnostics": {
+            "value": "[parameters('enableDiagnostics')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.39.26.7824",
+              "templateHash": "733363887813074231"
+            },
+            "description": "Deploys Virtual Network with Subnet and Network Security Group",
+            "version": "1.0.0"
+          },
+          "parameters": {
+            "vnetName": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 64,
+              "metadata": {
+                "description": "Name of the Virtual Network"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region for the Virtual Network"
+              }
+            },
+            "vnetAddressPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "Virtual Network address space in CIDR notation"
+              }
+            },
+            "subnetName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "metadata": {
+                "description": "Name of the Subnet"
+              }
+            },
+            "subnetAddressPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "Subnet address space in CIDR notation"
+              }
+            },
+            "appGatewaySubnetName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "metadata": {
+                "description": "Name of the Application Gateway Subnet"
+              }
+            },
+            "appGatewaySubnetAddressPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "Application Gateway subnet address space in CIDR notation"
+              }
+            },
+            "nsgName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "metadata": {
+                "description": "Name of the Network Security Group"
+              }
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Tags to apply to all resources"
+              }
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable diagnostic settings for network resources"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for diagnostics"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2023-11-01",
+              "name": "[parameters('nsgName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "AllowHttpsInbound",
+                    "properties": {
+                      "description": "Allow inbound HTTPS traffic from Internet",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "443",
+                      "sourceAddressPrefix": "Internet",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowHttpInbound",
+                    "properties": {
+                      "description": "Allow inbound HTTP traffic from Internet",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "80",
+                      "sourceAddressPrefix": "Internet",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowSSHInbound",
+                    "properties": {
+                      "description": "Allow SSH from Azure Bastion subnet (update source as needed)",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "22",
+                      "sourceAddressPrefix": "VirtualNetwork",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 120,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowRDPInbound",
+                    "properties": {
+                      "description": "Allow RDP from Azure Bastion subnet (update source as needed)",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "3389",
+                      "sourceAddressPrefix": "VirtualNetwork",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 130,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "DenyAllInbound",
+                    "properties": {
+                      "description": "Deny all other inbound traffic",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Deny",
+                      "priority": 4096,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowVnetOutbound",
+                    "properties": {
+                      "description": "Allow outbound traffic within VNet",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "VirtualNetwork",
+                      "destinationAddressPrefix": "VirtualNetwork",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Outbound"
+                    }
+                  },
+                  {
+                    "name": "AllowInternetOutbound",
+                    "properties": {
+                      "description": "Allow outbound traffic to Internet",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "Internet",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Outbound"
+                    }
+                  },
+                  {
+                    "name": "AllowAzureCloudOutbound",
+                    "properties": {
+                      "description": "Allow outbound traffic to Azure services",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "AzureCloud",
+                      "access": "Allow",
+                      "priority": 120,
+                      "direction": "Outbound"
+                    }
+                  }
+                ]
+              },
+              "metadata": {
+                "description": "Network Security Group with baseline security rules"
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}-appgw', parameters('nsgName'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "AllowGatewayManager",
+                    "properties": {
+                      "description": "Allow inbound traffic from Azure Gateway Manager",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "65200-65535",
+                      "sourceAddressPrefix": "GatewayManager",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowAzureLoadBalancer",
+                    "properties": {
+                      "description": "Allow inbound traffic from Azure Load Balancer",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "AzureLoadBalancer",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowHttpsInbound",
+                    "properties": {
+                      "description": "Allow inbound HTTPS traffic from Internet",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "443",
+                      "sourceAddressPrefix": "Internet",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 120,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowHttpInbound",
+                    "properties": {
+                      "description": "Allow inbound HTTP traffic from Internet",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "80",
+                      "sourceAddressPrefix": "Internet",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 130,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "DenyAllInbound",
+                    "properties": {
+                      "description": "Deny all other inbound traffic",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Deny",
+                      "priority": 4096,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AllowAllOutbound",
+                    "properties": {
+                      "description": "Allow all outbound traffic",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Outbound"
+                    }
+                  }
+                ]
+              },
+              "metadata": {
+                "description": "Network Security Group for Application Gateway subnet"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', parameters('nsgName'))]",
+              "name": "[format('{0}-diagnostics', parameters('nsgName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for Network Security Group"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', format('{0}-appgw', parameters('nsgName')))]",
+              "name": "[format('{0}-appgw-diagnostics', parameters('nsgName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-appgw', parameters('nsgName')))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for Application Gateway Network Security Group"
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2023-11-01",
+              "name": "[parameters('vnetName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('vnetAddressPrefix')]"
+                  ]
+                },
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+              },
+              "metadata": {
+                "description": "Virtual Network with specified address space"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/virtualNetworks/{0}', parameters('vnetName'))]",
+              "name": "[format('{0}-diagnostics', parameters('vnetName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for Virtual Network"
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}/{1}', parameters('vnetName'), parameters('subnetName'))]",
+              "properties": {
+                "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+                },
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled",
+                "serviceEndpoints": [
+                  {
+                    "service": "Microsoft.AzureCosmosDB",
+                    "locations": [
+                      "[parameters('location')]"
+                    ]
+                  },
+                  {
+                    "service": "Microsoft.ServiceBus",
+                    "locations": [
+                      "[parameters('location')]"
+                    ]
+                  },
+                  {
+                    "service": "Microsoft.Sql",
+                    "locations": [
+                      "[parameters('location')]"
+                    ]
+                  },
+                  {
+                    "service": "Microsoft.Storage",
+                    "locations": [
+                      "[parameters('location')]"
+                    ]
+                  },
+                  {
+                    "service": "Microsoft.KeyVault",
+                    "locations": [
+                      "[parameters('location')]"
+                    ]
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+              ],
+              "metadata": {
+                "description": "Subnet with Network Security Group association"
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}/{1}', parameters('vnetName'), parameters('appGatewaySubnetName'))]",
+              "properties": {
+                "addressPrefix": "[parameters('appGatewaySubnetAddressPrefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-appgw', parameters('nsgName')))]"
+                },
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-appgw', parameters('nsgName')))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+              ],
+              "metadata": {
+                "description": "Application Gateway subnet with dedicated NSG"
+              }
+            }
+          ],
+          "outputs": {
+            "vnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Virtual Network"
+              },
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+            },
+            "vnetName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Virtual Network"
+              },
+              "value": "[parameters('vnetName')]"
+            },
+            "vnetAddressPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "The address prefix of the Virtual Network"
+              },
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName')), '2023-11-01').addressSpace.addressPrefixes[0]]"
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Subnet"
+              },
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+            },
+            "subnetName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Subnet"
+              },
+              "value": "[parameters('subnetName')]"
+            },
+            "subnetAddressPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "The address prefix of the Subnet"
+              },
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName')), '2023-11-01').addressPrefix]"
+            },
+            "nsgId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Network Security Group"
+              },
+              "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+            },
+            "nsgName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Network Security Group"
+              },
+              "value": "[parameters('nsgName')]"
+            },
+            "appGatewaySubnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Application Gateway Subnet"
+              },
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('appGatewaySubnetName'))]"
+            },
+            "appGatewaySubnetName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Application Gateway Subnet"
+              },
+              "value": "[parameters('appGatewaySubnetName')]"
+            },
+            "appGatewaySubnetAddressPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "The address prefix of the Application Gateway Subnet"
+              },
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('appGatewaySubnetName')), '2023-11-01').addressPrefix]"
+            },
+            "appGatewayNsgId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Application Gateway NSG"
+              },
+              "value": "[resourceId('Microsoft.Network/networkSecurityGroups', format('{0}-appgw', parameters('nsgName')))]"
+            },
+            "appGatewayNsgName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Application Gateway NSG"
+              },
+              "value": "[format('{0}-appgw', parameters('nsgName'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
+      "metadata": {
+        "description": "Deploy Virtual Network with Subnet and NSG"
+      }
+    },
+    {
+      "condition": "[parameters('deployCosmosDb')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('cosmosDbDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "cosmosDbAccountName": {
+            "value": "[variables('cosmosDbAccountName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "databaseName": {
+            "value": "[parameters('cosmosDbDatabaseName')]"
+          },
+          "containers": {
+            "value": "[parameters('cosmosDbContainers')]"
+          },
+          "subnetId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.subnetId.value]"
+          },
+          "enablePrivateEndpoint": {
+            "value": "[parameters('enableCosmosDbPrivateEndpoint')]"
+          },
+          "tags": {
+            "value": "[variables('allTags')]"
+          },
+          "enableDiagnostics": {
+            "value": "[parameters('enableDiagnostics')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "enableFreeTier": {
+            "value": "[parameters('enableCosmosDbFreeTier')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.39.26.7824",
+              "templateHash": "1338725573427993291"
+            },
+            "description": "Deploys Azure Cosmos DB NoSQL account with Serverless capacity, database, and private endpoint",
+            "version": "1.0.0"
+          },
+          "parameters": {
+            "cosmosDbAccountName": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 44,
+              "metadata": {
+                "description": "Name of the Cosmos DB account"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region for the Cosmos DB account"
+              }
+            },
+            "databaseName": {
+              "type": "string",
+              "defaultValue": "appdb",
+              "minLength": 1,
+              "maxLength": 255,
+              "metadata": {
+                "description": "Name of the SQL database to create"
+              }
+            },
+            "containers": {
+              "type": "array",
+              "defaultValue": [],
+              "metadata": {
+                "description": "Array of containers to create in the database"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "Subnet resource ID for private endpoint"
+              }
+            },
+            "enablePrivateEndpoint": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable private endpoint for Cosmos DB"
+              }
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Tags to apply to all resources"
+              }
+            },
+            "defaultConsistencyLevel": {
+              "type": "string",
+              "defaultValue": "Session",
+              "allowedValues": [
+                "Eventual",
+                "ConsistentPrefix",
+                "Session",
+                "BoundedStaleness",
+                "Strong"
+              ],
+              "metadata": {
+                "description": "Default consistency level for the Cosmos DB account"
+              }
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable diagnostic settings"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for diagnostics"
+              }
+            },
+            "disableLocalAuth": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Disable local authentication (key-based auth)"
+              }
+            },
+            "disableKeyBasedMetadataWriteAccess": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Disable key-based metadata write access"
+              }
+            },
+            "enableFreeTier": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable free tier (only one per subscription)"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts",
+              "apiVersion": "2024-11-15",
+              "name": "[parameters('cosmosDbAccountName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "kind": "GlobalDocumentDB",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                  "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
+                },
+                "locations": [
+                  {
+                    "locationName": "[parameters('location')]",
+                    "failoverPriority": 0,
+                    "isZoneRedundant": false
+                  }
+                ],
+                "capabilities": [
+                  {
+                    "name": "EnableServerless"
+                  }
+                ],
+                "enableFreeTier": "[parameters('enableFreeTier')]",
+                "disableLocalAuth": "[parameters('disableLocalAuth')]",
+                "disableKeyBasedMetadataWriteAccess": "[parameters('disableKeyBasedMetadataWriteAccess')]",
+                "publicNetworkAccess": "[if(parameters('enablePrivateEndpoint'), 'Disabled', 'Enabled')]",
+                "networkAclBypass": "AzureServices",
+                "ipRules": [],
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "enableAutomaticFailover": false,
+                "enableMultipleWriteLocations": false,
+                "backupPolicy": {
+                  "type": "Continuous",
+                  "continuousModeProperties": {
+                    "tier": "Continuous30Days"
+                  }
+                },
+                "minimalTlsVersion": "Tls12"
+              },
+              "metadata": {
+                "description": "Azure Cosmos DB Account with NoSQL API and Serverless capacity"
+              }
+            },
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+              "apiVersion": "2024-11-15",
+              "name": "[format('{0}/{1}', parameters('cosmosDbAccountName'), parameters('databaseName'))]",
+              "properties": {
+                "resource": {
+                  "id": "[parameters('databaseName')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName'))]"
+              ],
+              "metadata": {
+                "description": "SQL Database for NoSQL API"
+              }
+            },
+            {
+              "copy": {
+                "name": "sqlContainers",
+                "count": "[length(parameters('containers'))]"
+              },
+              "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+              "apiVersion": "2024-11-15",
+              "name": "[format('{0}/{1}/{2}', parameters('cosmosDbAccountName'), parameters('databaseName'), parameters('containers')[copyIndex()].name)]",
+              "properties": {
+                "resource": {
+                  "id": "[parameters('containers')[copyIndex()].name]",
+                  "partitionKey": {
+                    "paths": "[parameters('containers')[copyIndex()].partitionKeyPaths]",
+                    "kind": "[if(contains(parameters('containers')[copyIndex()], 'partitionKeyKind'), parameters('containers')[copyIndex()].partitionKeyKind, 'Hash')]",
+                    "version": "[if(contains(parameters('containers')[copyIndex()], 'partitionKeyVersion'), parameters('containers')[copyIndex()].partitionKeyVersion, 2)]"
+                  },
+                  "indexingPolicy": "[if(contains(parameters('containers')[copyIndex()], 'indexingPolicy'), parameters('containers')[copyIndex()].indexingPolicy, createObject('indexingMode', 'consistent', 'automatic', true(), 'includedPaths', createArray(createObject('path', '/*')), 'excludedPaths', createArray(createObject('path', '/_etag/?'))))]",
+                  "defaultTtl": "[if(contains(parameters('containers')[copyIndex()], 'defaultTtl'), parameters('containers')[copyIndex()].defaultTtl, -1)]",
+                  "uniqueKeyPolicy": "[if(contains(parameters('containers')[copyIndex()], 'uniqueKeyPolicy'), parameters('containers')[copyIndex()].uniqueKeyPolicy, createObject('uniqueKeys', createArray()))]",
+                  "conflictResolutionPolicy": "[if(contains(parameters('containers')[copyIndex()], 'conflictResolutionPolicy'), parameters('containers')[copyIndex()].conflictResolutionPolicy, createObject('mode', 'LastWriterWins', 'conflictResolutionPath', '/_ts'))]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('cosmosDbAccountName'), parameters('databaseName'))]"
+              ],
+              "metadata": {
+                "description": "SQL Containers in the database"
+              }
+            },
+            {
+              "condition": "[parameters('enablePrivateEndpoint')]",
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}-pe', parameters('cosmosDbAccountName'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "subnet": {
+                  "id": "[parameters('subnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                  {
+                    "name": "[format('{0}-plsc', parameters('cosmosDbAccountName'))]",
+                    "properties": {
+                      "privateLinkServiceId": "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName'))]",
+                      "groupIds": [
+                        "Sql"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName'))]"
+              ],
+              "metadata": {
+                "description": "Private Endpoint for Cosmos DB"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.DocumentDB/databaseAccounts/{0}', parameters('cosmosDbAccountName'))]",
+              "name": "[format('{0}-diagnostics', parameters('cosmosDbAccountName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "Requests",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for Cosmos DB account"
+              }
+            }
+          ],
+          "outputs": {
+            "cosmosDbAccountId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Cosmos DB account"
+              },
+              "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName'))]"
+            },
+            "cosmosDbAccountName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Cosmos DB account"
+              },
+              "value": "[parameters('cosmosDbAccountName')]"
+            },
+            "cosmosDbEndpoint": {
+              "type": "string",
+              "metadata": {
+                "description": "The endpoint of the Cosmos DB account"
+              },
+              "value": "[reference(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName')), '2024-11-15').documentEndpoint]"
+            },
+            "databaseId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the database"
+              },
+              "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('cosmosDbAccountName'), parameters('databaseName'))]"
+            },
+            "databaseName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the database"
+              },
+              "value": "[parameters('databaseName')]"
+            },
+            "privateEndpointId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the private endpoint"
+              },
+              "value": "[if(parameters('enablePrivateEndpoint'), resourceId('Microsoft.Network/privateEndpoints', format('{0}-pe', parameters('cosmosDbAccountName'))), '')]"
+            },
+            "privateEndpointIp": {
+              "type": "string",
+              "metadata": {
+                "description": "The private IP address of the Cosmos DB account"
+              },
+              "value": "[if(parameters('enablePrivateEndpoint'), reference(resourceId('Microsoft.Network/privateEndpoints', format('{0}-pe', parameters('cosmosDbAccountName'))), '2023-11-01').customDnsConfigs[0].ipAddresses[0], '')]"
+            },
+            "systemAssignedIdentityPrincipalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The system-assigned managed identity principal ID"
+              },
+              "value": "[reference(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName')), '2024-11-15', 'full').identity.principalId]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName')))))]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
+      "metadata": {
+        "description": "Deploy Azure Cosmos DB with NoSQL API and Serverless capacity"
+      }
+    },
+    {
+      "condition": "[parameters('deployServiceBus')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('serviceBusDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[variables('serviceBusNamespaceName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "skuName": {
+            "value": "[parameters('serviceBusSku')]"
+          },
+          "queues": {
+            "value": "[parameters('serviceBusQueues')]"
+          },
+          "topics": {
+            "value": "[parameters('serviceBusTopics')]"
+          },
+          "subnetId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.subnetId.value]"
+          },
+          "enablePrivateEndpoint": {
+            "value": "[parameters('enableServiceBusPrivateEndpoint')]"
+          },
+          "zoneRedundant": {
+            "value": "[parameters('serviceBusZoneRedundant')]"
+          },
+          "tags": {
+            "value": "[variables('allTags')]"
+          },
+          "enableDiagnostics": {
+            "value": "[parameters('enableDiagnostics')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.39.26.7824",
+              "templateHash": "5402644254481982272"
+            },
+            "description": "Deploys Azure Service Bus Standard Tier namespace with queues, topics, and private endpoint",
+            "version": "1.0.0"
+          },
+          "parameters": {
+            "serviceBusNamespaceName": {
+              "type": "string",
+              "minLength": 6,
+              "maxLength": 50,
+              "metadata": {
+                "description": "Name of the Service Bus namespace"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region for the Service Bus namespace"
+              }
+            },
+            "skuName": {
+              "type": "string",
+              "defaultValue": "Standard",
+              "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+              ],
+              "metadata": {
+                "description": "Service Bus SKU"
+              }
+            },
+            "queues": {
+              "type": "array",
+              "defaultValue": [],
+              "metadata": {
+                "description": "Array of queues to create"
+              }
+            },
+            "topics": {
+              "type": "array",
+              "defaultValue": [],
+              "metadata": {
+                "description": "Array of topics to create"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "Subnet resource ID for private endpoint"
+              }
+            },
+            "enablePrivateEndpoint": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable private endpoint for Service Bus (requires Premium SKU)"
+              }
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Tags to apply to all resources"
+              }
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable diagnostic settings"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for diagnostics"
+              }
+            },
+            "disableLocalAuth": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Disable local authentication (SAS keys)"
+              }
+            },
+            "zoneRedundant": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable zone redundancy (Premium SKU only)"
+              }
+            },
+            "minimumTlsVersion": {
+              "type": "string",
+              "defaultValue": "1.2",
+              "allowedValues": [
+                "1.0",
+                "1.1",
+                "1.2"
+              ],
+              "metadata": {
+                "description": "Minimum TLS version"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ServiceBus/namespaces",
+              "apiVersion": "2022-10-01-preview",
+              "name": "[parameters('serviceBusNamespaceName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[parameters('skuName')]",
+                "tier": "[parameters('skuName')]"
+              },
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "disableLocalAuth": "[parameters('disableLocalAuth')]",
+                "publicNetworkAccess": "[if(parameters('enablePrivateEndpoint'), 'Disabled', 'Enabled')]",
+                "zoneRedundant": "[parameters('zoneRedundant')]",
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]"
+              },
+              "metadata": {
+                "description": "Azure Service Bus Namespace"
+              }
+            },
+            {
+              "copy": {
+                "name": "serviceBusQueues",
+                "count": "[length(parameters('queues'))]"
+              },
+              "type": "Microsoft.ServiceBus/namespaces/queues",
+              "apiVersion": "2022-10-01-preview",
+              "name": "[format('{0}/{1}', parameters('serviceBusNamespaceName'), parameters('queues')[copyIndex()].name)]",
+              "properties": {
+                "lockDuration": "[if(contains(parameters('queues')[copyIndex()], 'lockDuration'), parameters('queues')[copyIndex()].lockDuration, 'PT1M')]",
+                "maxSizeInMegabytes": "[if(contains(parameters('queues')[copyIndex()], 'maxSizeInMegabytes'), parameters('queues')[copyIndex()].maxSizeInMegabytes, 1024)]",
+                "requiresDuplicateDetection": "[if(contains(parameters('queues')[copyIndex()], 'requiresDuplicateDetection'), parameters('queues')[copyIndex()].requiresDuplicateDetection, false())]",
+                "requiresSession": "[if(contains(parameters('queues')[copyIndex()], 'requiresSession'), parameters('queues')[copyIndex()].requiresSession, false())]",
+                "defaultMessageTimeToLive": "[if(contains(parameters('queues')[copyIndex()], 'defaultMessageTimeToLive'), parameters('queues')[copyIndex()].defaultMessageTimeToLive, 'P14D')]",
+                "deadLetteringOnMessageExpiration": "[if(contains(parameters('queues')[copyIndex()], 'deadLetteringOnMessageExpiration'), parameters('queues')[copyIndex()].deadLetteringOnMessageExpiration, true())]",
+                "duplicateDetectionHistoryTimeWindow": "[if(contains(parameters('queues')[copyIndex()], 'duplicateDetectionHistoryTimeWindow'), parameters('queues')[copyIndex()].duplicateDetectionHistoryTimeWindow, 'PT10M')]",
+                "maxDeliveryCount": "[if(contains(parameters('queues')[copyIndex()], 'maxDeliveryCount'), parameters('queues')[copyIndex()].maxDeliveryCount, 10)]",
+                "enableBatchedOperations": "[if(contains(parameters('queues')[copyIndex()], 'enableBatchedOperations'), parameters('queues')[copyIndex()].enableBatchedOperations, true())]",
+                "autoDeleteOnIdle": "[if(contains(parameters('queues')[copyIndex()], 'autoDeleteOnIdle'), parameters('queues')[copyIndex()].autoDeleteOnIdle, 'P10675199DT2H48M5.4775807S')]",
+                "enablePartitioning": "[if(contains(parameters('queues')[copyIndex()], 'enablePartitioning'), parameters('queues')[copyIndex()].enablePartitioning, false())]",
+                "enableExpress": "[if(contains(parameters('queues')[copyIndex()], 'enableExpress'), parameters('queues')[copyIndex()].enableExpress, false())]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+              ],
+              "metadata": {
+                "description": "Service Bus Queues"
+              }
+            },
+            {
+              "copy": {
+                "name": "serviceBusTopics",
+                "count": "[length(parameters('topics'))]"
+              },
+              "type": "Microsoft.ServiceBus/namespaces/topics",
+              "apiVersion": "2022-10-01-preview",
+              "name": "[format('{0}/{1}', parameters('serviceBusNamespaceName'), parameters('topics')[copyIndex()].name)]",
+              "properties": {
+                "maxSizeInMegabytes": "[if(contains(parameters('topics')[copyIndex()], 'maxSizeInMegabytes'), parameters('topics')[copyIndex()].maxSizeInMegabytes, 1024)]",
+                "requiresDuplicateDetection": "[if(contains(parameters('topics')[copyIndex()], 'requiresDuplicateDetection'), parameters('topics')[copyIndex()].requiresDuplicateDetection, false())]",
+                "defaultMessageTimeToLive": "[if(contains(parameters('topics')[copyIndex()], 'defaultMessageTimeToLive'), parameters('topics')[copyIndex()].defaultMessageTimeToLive, 'P14D')]",
+                "duplicateDetectionHistoryTimeWindow": "[if(contains(parameters('topics')[copyIndex()], 'duplicateDetectionHistoryTimeWindow'), parameters('topics')[copyIndex()].duplicateDetectionHistoryTimeWindow, 'PT10M')]",
+                "enableBatchedOperations": "[if(contains(parameters('topics')[copyIndex()], 'enableBatchedOperations'), parameters('topics')[copyIndex()].enableBatchedOperations, true())]",
+                "autoDeleteOnIdle": "[if(contains(parameters('topics')[copyIndex()], 'autoDeleteOnIdle'), parameters('topics')[copyIndex()].autoDeleteOnIdle, 'P10675199DT2H48M5.4775807S')]",
+                "enablePartitioning": "[if(contains(parameters('topics')[copyIndex()], 'enablePartitioning'), parameters('topics')[copyIndex()].enablePartitioning, false())]",
+                "enableExpress": "[if(contains(parameters('topics')[copyIndex()], 'enableExpress'), parameters('topics')[copyIndex()].enableExpress, false())]",
+                "supportOrdering": "[if(contains(parameters('topics')[copyIndex()], 'supportOrdering'), parameters('topics')[copyIndex()].supportOrdering, true())]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+              ],
+              "metadata": {
+                "description": "Service Bus Topics"
+              }
+            },
+            {
+              "copy": {
+                "name": "serviceBusSubscriptions",
+                "count": "[length(parameters('topics'))]"
+              },
+              "condition": "[contains(parameters('topics')[copyIndex()], 'subscriptions')]",
+              "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+              "apiVersion": "2022-10-01-preview",
+              "name": "[format('{0}/{1}/{2}', parameters('serviceBusNamespaceName'), parameters('topics')[copyIndex()].name, parameters('topics')[copyIndex()].subscriptions[0].name)]",
+              "properties": {
+                "lockDuration": "[if(contains(parameters('topics')[copyIndex()].subscriptions[0], 'lockDuration'), parameters('topics')[copyIndex()].subscriptions[0].lockDuration, 'PT1M')]",
+                "requiresSession": "[if(contains(parameters('topics')[copyIndex()].subscriptions[0], 'requiresSession'), parameters('topics')[copyIndex()].subscriptions[0].requiresSession, false())]",
+                "defaultMessageTimeToLive": "[if(contains(parameters('topics')[copyIndex()].subscriptions[0], 'defaultMessageTimeToLive'), parameters('topics')[copyIndex()].subscriptions[0].defaultMessageTimeToLive, 'P14D')]",
+                "deadLetteringOnMessageExpiration": "[if(contains(parameters('topics')[copyIndex()].subscriptions[0], 'deadLetteringOnMessageExpiration'), parameters('topics')[copyIndex()].subscriptions[0].deadLetteringOnMessageExpiration, true())]",
+                "maxDeliveryCount": "[if(contains(parameters('topics')[copyIndex()].subscriptions[0], 'maxDeliveryCount'), parameters('topics')[copyIndex()].subscriptions[0].maxDeliveryCount, 10)]",
+                "enableBatchedOperations": "[if(contains(parameters('topics')[copyIndex()].subscriptions[0], 'enableBatchedOperations'), parameters('topics')[copyIndex()].subscriptions[0].enableBatchedOperations, true())]",
+                "autoDeleteOnIdle": "[if(contains(parameters('topics')[copyIndex()].subscriptions[0], 'autoDeleteOnIdle'), parameters('topics')[copyIndex()].subscriptions[0].autoDeleteOnIdle, 'P10675199DT2H48M5.4775807S')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces/topics', parameters('serviceBusNamespaceName'), parameters('topics')[copyIndex()].name)]"
+              ],
+              "metadata": {
+                "description": "Service Bus Topic Subscriptions"
+              }
+            },
+            {
+              "condition": "[parameters('enablePrivateEndpoint')]",
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}-pe', parameters('serviceBusNamespaceName'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "subnet": {
+                  "id": "[parameters('subnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                  {
+                    "name": "[format('{0}-plsc', parameters('serviceBusNamespaceName'))]",
+                    "properties": {
+                      "privateLinkServiceId": "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]",
+                      "groupIds": [
+                        "namespace"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+              ],
+              "metadata": {
+                "description": "Private Endpoint for Service Bus"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.ServiceBus/namespaces/{0}', parameters('serviceBusNamespaceName'))]",
+              "name": "[format('{0}-diagnostics', parameters('serviceBusNamespaceName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for Service Bus namespace"
+              }
+            }
+          ],
+          "outputs": {
+            "serviceBusNamespaceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Service Bus namespace"
+              },
+              "value": "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+            },
+            "serviceBusNamespaceName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Service Bus namespace"
+              },
+              "value": "[parameters('serviceBusNamespaceName')]"
+            },
+            "serviceBusEndpoint": {
+              "type": "string",
+              "metadata": {
+                "description": "The endpoint of the Service Bus namespace"
+              },
+              "value": "[reference(resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName')), '2022-10-01-preview').serviceBusEndpoint]"
+            },
+            "privateEndpointId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the private endpoint"
+              },
+              "value": "[if(parameters('enablePrivateEndpoint'), resourceId('Microsoft.Network/privateEndpoints', format('{0}-pe', parameters('serviceBusNamespaceName'))), '')]"
+            },
+            "systemAssignedIdentityPrincipalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The system-assigned managed identity principal ID"
+              },
+              "value": "[reference(resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName')), '2022-10-01-preview', 'full').identity.principalId]"
+            },
+            "queueNames": {
+              "type": "array",
+              "metadata": {
+                "description": "Array of queue names"
+              },
+              "copy": {
+                "count": "[length(parameters('queues'))]",
+                "input": "[parameters('queues')[copyIndex()].name]"
+              }
+            },
+            "topicNames": {
+              "type": "array",
+              "metadata": {
+                "description": "Array of topic names"
+              },
+              "copy": {
+                "count": "[length(parameters('topics'))]",
+                "input": "[parameters('topics')[copyIndex()].name]"
+              }
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName')))))]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
+      "metadata": {
+        "description": "Deploy Azure Service Bus namespace with queues and topics"
+      }
+    },
+    {
+      "condition": "[parameters('deploySqlServer')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('sqlServerDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "sqlServerName": {
+            "value": "[variables('sqlServerName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "administratorLogin": {
+            "value": "[parameters('sqlServerAdminLogin')]"
+          },
+          "administratorLoginPassword": {
+            "value": "[parameters('sqlServerAdminPassword')]"
+          },
+          "databases": {
+            "value": "[parameters('sqlDatabases')]"
+          },
+          "subnetId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.subnetId.value]"
+          },
+          "enablePrivateEndpoint": {
+            "value": "[parameters('enableSqlServerPrivateEndpoint')]"
+          },
+          "publicNetworkAccess": {
+            "value": "[parameters('sqlServerPublicNetworkAccess')]"
+          },
+          "entraAdminObjectId": {
+            "value": "[parameters('sqlServerEntraAdminObjectId')]"
+          },
+          "entraAdminLogin": {
+            "value": "[parameters('sqlServerEntraAdminLogin')]"
+          },
+          "tags": {
+            "value": "[variables('allTags')]"
+          },
+          "enableDiagnostics": {
+            "value": "[parameters('enableDiagnostics')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.39.26.7824",
+              "templateHash": "5038218676352219501"
+            },
+            "description": "Deploys Azure SQL Server with databases and private endpoint",
+            "version": "1.0.0"
+          },
+          "parameters": {
+            "sqlServerName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 63,
+              "metadata": {
+                "description": "Name of the SQL Server"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region for the SQL Server"
+              }
+            },
+            "administratorLogin": {
+              "type": "string",
+              "minLength": 1,
+              "metadata": {
+                "description": "SQL Server administrator login username"
+              }
+            },
+            "administratorLoginPassword": {
+              "type": "securestring",
+              "minLength": 8,
+              "maxLength": 128,
+              "metadata": {
+                "description": "SQL Server administrator login password"
+              }
+            },
+            "databases": {
+              "type": "array",
+              "defaultValue": [],
+              "metadata": {
+                "description": "Array of databases to create"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "Subnet resource ID for private endpoint"
+              }
+            },
+            "enablePrivateEndpoint": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable private endpoint for SQL Server"
+              }
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Tags to apply to all resources"
+              }
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable diagnostic settings"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for diagnostics"
+              }
+            },
+            "entraOnlyAuthentication": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable Microsoft Entra-only authentication"
+              }
+            },
+            "entraAdminObjectId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Microsoft Entra admin object ID"
+              }
+            },
+            "entraAdminLogin": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Microsoft Entra admin login name"
+              }
+            },
+            "minimalTlsVersion": {
+              "type": "string",
+              "defaultValue": "1.2",
+              "allowedValues": [
+                "1.0",
+                "1.1",
+                "1.2"
+              ],
+              "metadata": {
+                "description": "Minimum TLS version"
+              }
+            },
+            "publicNetworkAccess": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable public network access"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Sql/servers",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[parameters('sqlServerName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "version": "12.0",
+                "minimalTlsVersion": "[parameters('minimalTlsVersion')]",
+                "publicNetworkAccess": "[if(parameters('publicNetworkAccess'), 'Enabled', 'Disabled')]",
+                "restrictOutboundNetworkAccess": "Disabled"
+              },
+              "metadata": {
+                "description": "Azure SQL Server"
+              }
+            },
+            {
+              "condition": "[and(not(empty(parameters('entraAdminObjectId'))), not(empty(parameters('entraAdminLogin'))))]",
+              "type": "Microsoft.Sql/servers/administrators",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), 'ActiveDirectory')]",
+              "properties": {
+                "administratorType": "ActiveDirectory",
+                "login": "[parameters('entraAdminLogin')]",
+                "sid": "[parameters('entraAdminObjectId')]",
+                "tenantId": "[subscription().tenantId]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ],
+              "metadata": {
+                "description": "Microsoft Entra admin configuration"
+              }
+            },
+            {
+              "condition": "[not(parameters('enablePrivateEndpoint'))]",
+              "type": "Microsoft.Sql/servers/firewallRules",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), 'AllowAllWindowsAzureIps')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ],
+              "metadata": {
+                "description": "Allow Azure services to access server"
+              }
+            },
+            {
+              "copy": {
+                "name": "sqlDatabases",
+                "count": "[length(parameters('databases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('databases')[copyIndex()].name)]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[if(contains(parameters('databases')[copyIndex()], 'skuName'), parameters('databases')[copyIndex()].skuName, 'GP_Gen5_2')]",
+                "tier": "[if(contains(parameters('databases')[copyIndex()], 'tier'), parameters('databases')[copyIndex()].tier, 'GeneralPurpose')]",
+                "family": "[if(contains(parameters('databases')[copyIndex()], 'family'), parameters('databases')[copyIndex()].family, 'Gen5')]",
+                "capacity": "[if(contains(parameters('databases')[copyIndex()], 'vCores'), parameters('databases')[copyIndex()].vCores, 2)]"
+              },
+              "properties": {
+                "collation": "[if(contains(parameters('databases')[copyIndex()], 'collation'), parameters('databases')[copyIndex()].collation, 'SQL_Latin1_General_CP1_CI_AS')]",
+                "maxSizeBytes": "[if(contains(parameters('databases')[copyIndex()], 'maxSizeBytes'), parameters('databases')[copyIndex()].maxSizeBytes, json('34359738368'))]",
+                "catalogCollation": "[if(contains(parameters('databases')[copyIndex()], 'catalogCollation'), parameters('databases')[copyIndex()].catalogCollation, 'SQL_Latin1_General_CP1_CI_AS')]",
+                "zoneRedundant": "[if(contains(parameters('databases')[copyIndex()], 'zoneRedundant'), parameters('databases')[copyIndex()].zoneRedundant, false())]",
+                "licenseType": "[if(contains(parameters('databases')[copyIndex()], 'licenseType'), parameters('databases')[copyIndex()].licenseType, 'LicenseIncluded')]",
+                "readScale": "[if(contains(parameters('databases')[copyIndex()], 'readScale'), parameters('databases')[copyIndex()].readScale, 'Disabled')]",
+                "requestedBackupStorageRedundancy": "[if(contains(parameters('databases')[copyIndex()], 'backupStorageRedundancy'), parameters('databases')[copyIndex()].backupStorageRedundancy, 'Local')]",
+                "minCapacity": "[if(contains(parameters('databases')[copyIndex()], 'minCapacity'), parameters('databases')[copyIndex()].minCapacity, json('null'))]",
+                "autoPauseDelay": "[if(contains(parameters('databases')[copyIndex()], 'autoPauseDelay'), parameters('databases')[copyIndex()].autoPauseDelay, json('null'))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ],
+              "metadata": {
+                "description": "SQL Databases"
+              }
+            },
+            {
+              "copy": {
+                "name": "sqlDatabaseTDE",
+                "count": "[length(parameters('databases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases/transparentDataEncryption",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}/{2}', parameters('sqlServerName'), parameters('databases')[copyIndex()].name, 'current')]",
+              "properties": {
+                "state": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('databases')[copyIndex()].name)]"
+              ],
+              "metadata": {
+                "description": "Transparent Data Encryption for databases"
+              }
+            },
+            {
+              "copy": {
+                "name": "sqlDatabaseBackupShortTermRetention",
+                "count": "[length(parameters('databases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}/{2}', parameters('sqlServerName'), parameters('databases')[copyIndex()].name, 'default')]",
+              "properties": {
+                "retentionDays": "[if(contains(parameters('databases')[copyIndex()], 'backupRetentionDays'), parameters('databases')[copyIndex()].backupRetentionDays, 7)]",
+                "diffBackupIntervalInHours": 24
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('databases')[copyIndex()].name)]"
+              ],
+              "metadata": {
+                "description": "Short-term backup retention policy for databases"
+              }
+            },
+            {
+              "condition": "[parameters('enablePrivateEndpoint')]",
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}-pe', parameters('sqlServerName'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "subnet": {
+                  "id": "[parameters('subnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                  {
+                    "name": "[format('{0}-plsc', parameters('sqlServerName'))]",
+                    "properties": {
+                      "privateLinkServiceId": "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]",
+                      "groupIds": [
+                        "sqlServer"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ],
+              "metadata": {
+                "description": "Private Endpoint for SQL Server"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Sql/servers/{0}', parameters('sqlServerName'))]",
+              "name": "[format('{0}-diagnostics', parameters('sqlServerName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for SQL Server"
+              }
+            },
+            {
+              "copy": {
+                "name": "sqlDatabaseDiagnostics",
+                "count": "[length(parameters('databases'))]"
+              },
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Sql/servers/{0}/databases/{1}', parameters('sqlServerName'), parameters('databases')[copyIndex()].name)]",
+              "name": "[format('{0}-diagnostics', parameters('databases')[copyIndex()].name)]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('databases')[copyIndex()].name)]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for SQL Databases"
+              }
+            }
+          ],
+          "outputs": {
+            "sqlServerId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the SQL Server"
+              },
+              "value": "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+            },
+            "sqlServerName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the SQL Server"
+              },
+              "value": "[parameters('sqlServerName')]"
+            },
+            "sqlServerFqdn": {
+              "type": "string",
+              "metadata": {
+                "description": "The fully qualified domain name of the SQL Server"
+              },
+              "value": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlServerName')), '2023-05-01-preview').fullyQualifiedDomainName]"
+            },
+            "privateEndpointId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the private endpoint"
+              },
+              "value": "[if(parameters('enablePrivateEndpoint'), resourceId('Microsoft.Network/privateEndpoints', format('{0}-pe', parameters('sqlServerName'))), '')]"
+            },
+            "systemAssignedIdentityPrincipalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The system-assigned managed identity principal ID"
+              },
+              "value": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlServerName')), '2023-05-01-preview', 'full').identity.principalId]"
+            },
+            "databaseNames": {
+              "type": "array",
+              "metadata": {
+                "description": "Array of database names"
+              },
+              "copy": {
+                "count": "[length(parameters('databases'))]",
+                "input": "[parameters('databases')[copyIndex()].name]"
+              }
+            },
+            "databaseIds": {
+              "type": "array",
+              "metadata": {
+                "description": "Array of database resource IDs"
+              },
+              "copy": {
+                "count": "[length(parameters('databases'))]",
+                "input": "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('databases')[copyIndex()].name)]"
+              }
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName')))))]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
+      "metadata": {
+        "description": "Deploy Azure SQL Server with databases"
+      }
+    },
+    {
+      "condition": "[parameters('deployAppGateway')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "appGatewayName": {
+            "value": "[variables('appGatewayName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "skuName": {
+            "value": "[parameters('appGatewaySku')]"
+          },
+          "skuTier": {
+            "value": "[parameters('appGatewaySku')]"
+          },
+          "minCapacity": {
+            "value": "[parameters('appGatewayMinCapacity')]"
+          },
+          "maxCapacity": {
+            "value": "[parameters('appGatewayMaxCapacity')]"
+          },
+          "publicIpName": {
+            "value": "[variables('appGatewayPublicIpName')]"
+          },
+          "subnetId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.appGatewaySubnetId.value]"
+          },
+          "enableWaf": {
+            "value": "[parameters('enableWaf')]"
+          },
+          "tags": {
+            "value": "[variables('allTags')]"
+          },
+          "enableDiagnostics": {
+            "value": "[parameters('enableDiagnostics')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.39.26.7824",
+              "templateHash": "16741182219073693907"
+            },
+            "description": "Deploys Azure Application Gateway v2 with AGIC support",
+            "version": "1.0.0"
+          },
+          "parameters": {
+            "appGatewayName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "metadata": {
+                "description": "Name of the Application Gateway"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region for the Application Gateway"
+              }
+            },
+            "skuName": {
+              "type": "string",
+              "defaultValue": "Standard_v2",
+              "allowedValues": [
+                "Standard_v2",
+                "WAF_v2"
+              ],
+              "metadata": {
+                "description": "SKU name for Application Gateway"
+              }
+            },
+            "skuTier": {
+              "type": "string",
+              "defaultValue": "Standard_v2",
+              "allowedValues": [
+                "Standard_v2",
+                "WAF_v2"
+              ],
+              "metadata": {
+                "description": "SKU tier for Application Gateway"
+              }
+            },
+            "minCapacity": {
+              "type": "int",
+              "defaultValue": 0,
+              "minValue": 0,
+              "maxValue": 125,
+              "metadata": {
+                "description": "Minimum capacity units for autoscaling"
+              }
+            },
+            "maxCapacity": {
+              "type": "int",
+              "defaultValue": 10,
+              "minValue": 2,
+              "maxValue": 125,
+              "metadata": {
+                "description": "Maximum capacity units for autoscaling"
+              }
+            },
+            "publicIpName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of the Public IP for Application Gateway"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "Resource ID of the Application Gateway subnet"
+              }
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Tags to apply to all resources"
+              }
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable diagnostic settings"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for diagnostics"
+              }
+            },
+            "enableWaf": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable Web Application Firewall"
+              }
+            },
+            "wafMode": {
+              "type": "string",
+              "defaultValue": "Detection",
+              "allowedValues": [
+                "Detection",
+                "Prevention"
+              ],
+              "metadata": {
+                "description": "WAF mode"
+              }
+            },
+            "wafRuleSetType": {
+              "type": "string",
+              "defaultValue": "OWASP",
+              "metadata": {
+                "description": "WAF rule set type"
+              }
+            },
+            "wafRuleSetVersion": {
+              "type": "string",
+              "defaultValue": "3.2",
+              "metadata": {
+                "description": "WAF rule set version"
+              }
+            },
+            "enableHttp2": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable HTTP/2 support"
+              }
+            },
+            "requestTimeout": {
+              "type": "int",
+              "defaultValue": 30,
+              "minValue": 1,
+              "maxValue": 86400,
+              "metadata": {
+                "description": "Request timeout in seconds"
+              }
+            }
+          },
+          "variables": {
+            "frontendPortName": "frontendPort",
+            "frontendIPConfigurationName": "frontendIPConfiguration",
+            "backendAddressPoolName": "defaultBackendPool",
+            "backendHttpSettingsName": "defaultHttpSettings",
+            "httpListenerName": "httpListener",
+            "requestRoutingRuleName": "defaultRoutingRule",
+            "probeName": "defaultHealthProbe"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-01-31",
+              "name": "[format('{0}-identity', parameters('appGatewayName'))]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "metadata": {
+                "description": "User-assigned managed identity for Application Gateway (required for AGIC)"
+              }
+            },
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2023-11-01",
+              "name": "[parameters('publicIpName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                  "domainNameLabel": "[toLower(parameters('appGatewayName'))]"
+                }
+              },
+              "metadata": {
+                "description": "Public IP for Application Gateway frontend"
+              }
+            },
+            {
+              "type": "Microsoft.Network/applicationGateways",
+              "apiVersion": "2023-11-01",
+              "name": "[parameters('appGatewayName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-identity', parameters('appGatewayName'))))]": {}
+                }
+              },
+              "properties": {
+                "sku": {
+                  "name": "[parameters('skuName')]",
+                  "tier": "[parameters('skuTier')]"
+                },
+                "autoscaleConfiguration": {
+                  "minCapacity": "[parameters('minCapacity')]",
+                  "maxCapacity": "[parameters('maxCapacity')]"
+                },
+                "enableHttp2": "[parameters('enableHttp2')]",
+                "gatewayIPConfigurations": [
+                  {
+                    "name": "gatewayIPConfiguration",
+                    "properties": {
+                      "subnet": {
+                        "id": "[parameters('subnetId')]"
+                      }
+                    }
+                  }
+                ],
+                "frontendIPConfigurations": [
+                  {
+                    "name": "[variables('frontendIPConfigurationName')]",
+                    "properties": {
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+                      }
+                    }
+                  }
+                ],
+                "frontendPorts": [
+                  {
+                    "name": "[variables('frontendPortName')]",
+                    "properties": {
+                      "port": 80
+                    }
+                  },
+                  {
+                    "name": "frontendPortHttps",
+                    "properties": {
+                      "port": 443
+                    }
+                  }
+                ],
+                "backendAddressPools": [
+                  {
+                    "name": "[variables('backendAddressPoolName')]",
+                    "properties": {
+                      "backendAddresses": []
+                    }
+                  }
+                ],
+                "backendHttpSettingsCollection": [
+                  {
+                    "name": "[variables('backendHttpSettingsName')]",
+                    "properties": {
+                      "port": 80,
+                      "protocol": "Http",
+                      "cookieBasedAffinity": "Disabled",
+                      "pickHostNameFromBackendAddress": false,
+                      "requestTimeout": "[parameters('requestTimeout')]",
+                      "probe": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/probes', parameters('appGatewayName'), variables('probeName'))]"
+                      }
+                    }
+                  }
+                ],
+                "httpListeners": [
+                  {
+                    "name": "[variables('httpListenerName')]",
+                    "properties": {
+                      "frontendIPConfiguration": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', parameters('appGatewayName'), variables('frontendIPConfigurationName'))]"
+                      },
+                      "frontendPort": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts', parameters('appGatewayName'), variables('frontendPortName'))]"
+                      },
+                      "protocol": "Http",
+                      "requireServerNameIndication": false
+                    }
+                  }
+                ],
+                "requestRoutingRules": [
+                  {
+                    "name": "[variables('requestRoutingRuleName')]",
+                    "properties": {
+                      "ruleType": "Basic",
+                      "priority": 100,
+                      "httpListener": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/httpListeners', parameters('appGatewayName'), variables('httpListenerName'))]"
+                      },
+                      "backendAddressPool": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('appGatewayName'), variables('backendAddressPoolName'))]"
+                      },
+                      "backendHttpSettings": {
+                        "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', parameters('appGatewayName'), variables('backendHttpSettingsName'))]"
+                      }
+                    }
+                  }
+                ],
+                "probes": [
+                  {
+                    "name": "[variables('probeName')]",
+                    "properties": {
+                      "protocol": "Http",
+                      "path": "/",
+                      "interval": 30,
+                      "timeout": 30,
+                      "unhealthyThreshold": 3,
+                      "pickHostNameFromBackendHttpSettings": true,
+                      "minServers": 0,
+                      "match": {
+                        "statusCodes": [
+                          "200-399"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "webApplicationFirewallConfiguration": "[if(parameters('enableWaf'), createObject('enabled', true(), 'firewallMode', parameters('wafMode'), 'ruleSetType', parameters('wafRuleSetType'), 'ruleSetVersion', parameters('wafRuleSetVersion'), 'disabledRuleGroups', createArray(), 'requestBodyCheck', true(), 'maxRequestBodySizeInKb', 128, 'fileUploadLimitInMb', 100), null())]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-identity', parameters('appGatewayName')))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+              ],
+              "metadata": {
+                "description": "Application Gateway v2"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/applicationGateways/{0}', parameters('appGatewayName'))]",
+              "name": "[format('{0}-diagnostics', parameters('appGatewayName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for Application Gateway"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/publicIPAddresses/{0}', parameters('publicIpName'))]",
+              "name": "[format('{0}-diagnostics', parameters('publicIpName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for Public IP"
+              }
+            }
+          ],
+          "outputs": {
+            "appGatewayId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Application Gateway"
+              },
+              "value": "[resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName'))]"
+            },
+            "appGatewayName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Application Gateway"
+              },
+              "value": "[parameters('appGatewayName')]"
+            },
+            "publicIpAddress": {
+              "type": "string",
+              "metadata": {
+                "description": "The public IP address of the Application Gateway"
+              },
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2023-11-01').ipAddress]"
+            },
+            "fqdn": {
+              "type": "string",
+              "metadata": {
+                "description": "The FQDN of the Application Gateway"
+              },
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2023-11-01').dnsSettings.fqdn]"
+            },
+            "identityId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Application Gateway managed identity"
+              },
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-identity', parameters('appGatewayName')))]"
+            },
+            "identityPrincipalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The principal ID of the Application Gateway managed identity"
+              },
+              "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-identity', parameters('appGatewayName'))), '2023-01-31').principalId]"
+            },
+            "publicIpId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Public IP"
+              },
+              "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+            },
+            "publicIpName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Public IP"
+              },
+              "value": "[parameters('publicIpName')]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName')))))]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
+      "metadata": {
+        "description": "Deploy Application Gateway with AGIC support"
+      }
+    },
+    {
+      "condition": "[parameters('deployAKS')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "aksClusterName": {
+            "value": "[variables('aksClusterName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "dnsPrefix": {
+            "value": "[variables('aksDnsPrefix')]"
+          },
+          "kubernetesVersion": {
+            "value": "[parameters('kubernetesVersion')]"
+          },
+          "nodeCount": {
+            "value": "[parameters('aksNodeCount')]"
+          },
+          "nodeVmSize": {
+            "value": "[parameters('aksNodeVmSize')]"
+          },
+          "subnetId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.subnetId.value]"
+          },
+          "enableAutoScaling": {
+            "value": "[parameters('enableAksAutoScaling')]"
+          },
+          "minCount": {
+            "value": "[parameters('aksMinNodeCount')]"
+          },
+          "maxCount": {
+            "value": "[parameters('aksMaxNodeCount')]"
+          },
+          "serviceCidr": {
+            "value": "[parameters('aksServiceCidr')]"
+          },
+          "dnsServiceIP": {
+            "value": "[parameters('aksDnsServiceIP')]"
+          },
+          "enableAGIC": {
+            "value": "[and(parameters('enableAGIC'), parameters('deployAppGateway'))]"
+          },
+          "applicationGatewayId": "[if(parameters('deployAppGateway'), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.appGatewayId.value), createObject('value', ''))]",
+          "enableMonitoring": {
+            "value": "[parameters('enableAksMonitoring')]"
+          },
+          "logAnalyticsWorkspaceId": "[if(parameters('enableAksMonitoring'), createObject('value', parameters('logAnalyticsWorkspaceId')), createObject('value', ''))]",
+          "skuTier": {
+            "value": "[parameters('aksSku')]"
+          },
+          "tags": {
+            "value": "[variables('allTags')]"
+          },
+          "enableDiagnostics": {
+            "value": "[parameters('enableDiagnostics')]"
+          },
+          "diagnosticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.39.26.7824",
+              "templateHash": "10041806454423621288"
+            },
+            "description": "Deploys Azure Kubernetes Service with AGIC addon",
+            "version": "1.0.0"
+          },
+          "parameters": {
+            "aksClusterName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 63,
+              "metadata": {
+                "description": "Name of the AKS cluster"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region for the AKS cluster"
+              }
+            },
+            "dnsPrefix": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 54,
+              "metadata": {
+                "description": "DNS prefix for the AKS cluster"
+              }
+            },
+            "kubernetesVersion": {
+              "type": "string",
+              "defaultValue": "1.29.0",
+              "metadata": {
+                "description": "Kubernetes version"
+              }
+            },
+            "nodePoolName": {
+              "type": "string",
+              "defaultValue": "systempool",
+              "minLength": 1,
+              "maxLength": 12,
+              "metadata": {
+                "description": "Node pool name"
+              }
+            },
+            "nodeCount": {
+              "type": "int",
+              "defaultValue": 3,
+              "minValue": 1,
+              "maxValue": 100,
+              "metadata": {
+                "description": "Number of nodes in the system node pool"
+              }
+            },
+            "nodeVmSize": {
+              "type": "string",
+              "defaultValue": "Standard_D2s_v3",
+              "metadata": {
+                "description": "VM size for the system node pool"
+              }
+            },
+            "osDiskSizeGB": {
+              "type": "int",
+              "defaultValue": 128,
+              "minValue": 0,
+              "maxValue": 2048,
+              "metadata": {
+                "description": "OS disk size in GB"
+              }
+            },
+            "osDiskType": {
+              "type": "string",
+              "defaultValue": "Managed",
+              "allowedValues": [
+                "Managed",
+                "Ephemeral"
+              ],
+              "metadata": {
+                "description": "OS disk type"
+              }
+            },
+            "maxPods": {
+              "type": "int",
+              "defaultValue": 30,
+              "minValue": 10,
+              "maxValue": 250,
+              "metadata": {
+                "description": "Maximum number of pods per node"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "Resource ID of the VNet subnet for AKS nodes"
+              }
+            },
+            "enableAutoScaling": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable auto-scaling"
+              }
+            },
+            "minCount": {
+              "type": "int",
+              "defaultValue": 1,
+              "minValue": 1,
+              "maxValue": 100,
+              "metadata": {
+                "description": "Minimum number of nodes for auto-scaling"
+              }
+            },
+            "maxCount": {
+              "type": "int",
+              "defaultValue": 5,
+              "minValue": 1,
+              "maxValue": 1000,
+              "metadata": {
+                "description": "Maximum number of nodes for auto-scaling"
+              }
+            },
+            "networkPlugin": {
+              "type": "string",
+              "defaultValue": "azure",
+              "allowedValues": [
+                "azure",
+                "kubenet"
+              ],
+              "metadata": {
+                "description": "Network plugin"
+              }
+            },
+            "networkPolicy": {
+              "type": "string",
+              "defaultValue": "azure",
+              "allowedValues": [
+                "azure",
+                "calico",
+                ""
+              ],
+              "metadata": {
+                "description": "Network policy"
+              }
+            },
+            "serviceCidr": {
+              "type": "string",
+              "defaultValue": "10.2.0.0/16",
+              "metadata": {
+                "description": "Service CIDR for Kubernetes services"
+              }
+            },
+            "dnsServiceIP": {
+              "type": "string",
+              "defaultValue": "10.2.0.10",
+              "metadata": {
+                "description": "DNS service IP address"
+              }
+            },
+            "enableAGIC": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable AGIC addon"
+              }
+            },
+            "applicationGatewayId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Resource ID of the Application Gateway for AGIC"
+              }
+            },
+            "enableMonitoring": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable Azure Monitor for containers"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for monitoring"
+              }
+            },
+            "enablePodSecurityPolicy": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable pod security policy (deprecated, use Azure Policy instead)"
+              }
+            },
+            "enableRBAC": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable RBAC"
+              }
+            },
+            "enableAzureAD": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable Azure AD integration"
+              }
+            },
+            "enablePrivateCluster": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable private cluster"
+              }
+            },
+            "skuTier": {
+              "type": "string",
+              "defaultValue": "Free",
+              "allowedValues": [
+                "Free",
+                "Standard",
+                "Premium"
+              ],
+              "metadata": {
+                "description": "SKU tier for AKS"
+              }
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Tags to apply to all resources"
+              }
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable diagnostic settings"
+              }
+            },
+            "diagnosticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for diagnostics"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ContainerService/managedClusters",
+              "apiVersion": "2024-01-01",
+              "name": "[parameters('aksClusterName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "sku": {
+                "name": "Base",
+                "tier": "[parameters('skuTier')]"
+              },
+              "properties": {
+                "kubernetesVersion": "[parameters('kubernetesVersion')]",
+                "dnsPrefix": "[parameters('dnsPrefix')]",
+                "enableRBAC": "[parameters('enableRBAC')]",
+                "enablePodSecurityPolicy": "[parameters('enablePodSecurityPolicy')]",
+                "networkProfile": {
+                  "networkPlugin": "[parameters('networkPlugin')]",
+                  "networkPolicy": "[parameters('networkPolicy')]",
+                  "serviceCidr": "[parameters('serviceCidr')]",
+                  "dnsServiceIP": "[parameters('dnsServiceIP')]",
+                  "loadBalancerSku": "standard",
+                  "outboundType": "loadBalancer"
+                },
+                "apiServerAccessProfile": "[if(parameters('enablePrivateCluster'), createObject('enablePrivateCluster', true(), 'enablePrivateClusterPublicFQDN', false()), createObject('enablePrivateCluster', false()))]",
+                "agentPoolProfiles": [
+                  {
+                    "name": "[parameters('nodePoolName')]",
+                    "count": "[parameters('nodeCount')]",
+                    "vmSize": "[parameters('nodeVmSize')]",
+                    "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+                    "osDiskType": "[parameters('osDiskType')]",
+                    "vnetSubnetID": "[parameters('subnetId')]",
+                    "maxPods": "[parameters('maxPods')]",
+                    "type": "VirtualMachineScaleSets",
+                    "mode": "System",
+                    "osType": "Linux",
+                    "osSKU": "Ubuntu",
+                    "enableAutoScaling": "[parameters('enableAutoScaling')]",
+                    "minCount": "[if(parameters('enableAutoScaling'), parameters('minCount'), null())]",
+                    "maxCount": "[if(parameters('enableAutoScaling'), parameters('maxCount'), null())]",
+                    "enableNodePublicIP": false,
+                    "enableEncryptionAtHost": false,
+                    "upgradeSettings": {
+                      "maxSurge": "33%"
+                    }
+                  }
+                ],
+                "addonProfiles": {
+                  "ingressApplicationGateway": "[if(and(parameters('enableAGIC'), not(empty(parameters('applicationGatewayId')))), createObject('enabled', true(), 'config', createObject('applicationGatewayId', parameters('applicationGatewayId'))), createObject('enabled', false()))]",
+                  "omsagent": "[if(and(parameters('enableMonitoring'), not(empty(parameters('logAnalyticsWorkspaceId')))), createObject('enabled', true(), 'config', createObject('logAnalyticsWorkspaceResourceID', parameters('logAnalyticsWorkspaceId'))), createObject('enabled', false()))]",
+                  "azurepolicy": {
+                    "enabled": false
+                  },
+                  "azureKeyvaultSecretsProvider": {
+                    "enabled": false
+                  }
+                },
+                "aadProfile": "[if(parameters('enableAzureAD'), createObject('managed', true(), 'enableAzureRBAC', true()), null())]",
+                "autoUpgradeProfile": {
+                  "upgradeChannel": "stable"
+                },
+                "disableLocalAccounts": "[parameters('enableAzureAD')]"
+              },
+              "metadata": {
+                "description": "Azure Kubernetes Service cluster"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('diagnosticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.ContainerService/managedClusters/{0}', parameters('aksClusterName'))]",
+              "name": "[format('{0}-diagnostics', parameters('aksClusterName'))]",
+              "properties": {
+                "workspaceId": "[parameters('diagnosticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "category": "kube-apiserver",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  },
+                  {
+                    "category": "kube-audit",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  },
+                  {
+                    "category": "kube-controller-manager",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  },
+                  {
+                    "category": "kube-scheduler",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  },
+                  {
+                    "category": "cluster-autoscaler",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  },
+                  {
+                    "category": "guard",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for AKS cluster"
+              }
+            }
+          ],
+          "outputs": {
+            "aksClusterId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the AKS cluster"
+              },
+              "value": "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]"
+            },
+            "aksClusterName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the AKS cluster"
+              },
+              "value": "[parameters('aksClusterName')]"
+            },
+            "aksClusterFqdn": {
+              "type": "string",
+              "metadata": {
+                "description": "The FQDN of the AKS cluster"
+              },
+              "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2024-01-01').fqdn]"
+            },
+            "kubernetesVersion": {
+              "type": "string",
+              "metadata": {
+                "description": "The Kubernetes version"
+              },
+              "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2024-01-01').kubernetesVersion]"
+            },
+            "identityPrincipalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The principal ID of the AKS cluster managed identity"
+              },
+              "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2024-01-01', 'full').identity.principalId]"
+            },
+            "identityTenantId": {
+              "type": "string",
+              "metadata": {
+                "description": "The tenant ID of the AKS cluster managed identity"
+              },
+              "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2024-01-01', 'full').identity.tenantId]"
+            },
+            "nodeResourceGroup": {
+              "type": "string",
+              "metadata": {
+                "description": "The node resource group name"
+              },
+              "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2024-01-01').nodeResourceGroup]"
+            },
+            "agicIdentityObjectId": {
+              "type": "string",
+              "metadata": {
+                "description": "The AGIC addon identity object ID"
+              },
+              "value": "[if(and(parameters('enableAGIC'), not(empty(parameters('applicationGatewayId')))), reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2024-01-01').addonProfiles.ingressApplicationGateway.identity.objectId, '')]"
+            },
+            "agicIdentityClientId": {
+              "type": "string",
+              "metadata": {
+                "description": "The AGIC addon identity client ID"
+              },
+              "value": "[if(and(parameters('enableAGIC'), not(empty(parameters('applicationGatewayId')))), reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName')), '2024-01-01').addonProfiles.ingressApplicationGateway.identity.clientId, '')]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName')))))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName')))))]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
+      "metadata": {
+        "description": "Deploy Azure Kubernetes Service with AGIC addon"
+      }
+    },
+    {
+      "condition": "[parameters('deployApiManagement')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "apimName": {
+            "value": "[variables('apimName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "skuName": {
+            "value": "[parameters('apimSku')]"
+          },
+          "skuCapacity": {
+            "value": "[parameters('apimCapacity')]"
+          },
+          "publisherEmail": {
+            "value": "[parameters('apimPublisherEmail')]"
+          },
+          "publisherName": {
+            "value": "[parameters('apimPublisherName')]"
+          },
+          "virtualNetworkType": {
+            "value": "[parameters('apimVirtualNetworkType')]"
+          },
+          "subnetId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.subnetId.value]"
+          },
+          "tags": {
+            "value": "[variables('allTags')]"
+          },
+          "enableDiagnostics": {
+            "value": "[parameters('enableDiagnostics')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.39.26.7824",
+              "templateHash": "3334619595994158710"
+            },
+            "description": "Deploys Azure API Management with VNet integration",
+            "version": "1.0.0"
+          },
+          "parameters": {
+            "apimName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "metadata": {
+                "description": "Name of the API Management service"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Azure region for the API Management service"
+              }
+            },
+            "skuName": {
+              "type": "string",
+              "defaultValue": "Developer",
+              "allowedValues": [
+                "Consumption",
+                "Developer",
+                "Basic",
+                "Standard",
+                "Premium"
+              ],
+              "metadata": {
+                "description": "SKU name for API Management"
+              }
+            },
+            "skuCapacity": {
+              "type": "int",
+              "defaultValue": 1,
+              "minValue": 0,
+              "maxValue": 12,
+              "metadata": {
+                "description": "SKU capacity (number of units)"
+              }
+            },
+            "publisherEmail": {
+              "type": "string",
+              "minLength": 1,
+              "metadata": {
+                "description": "Publisher email address"
+              }
+            },
+            "publisherName": {
+              "type": "string",
+              "minLength": 1,
+              "metadata": {
+                "description": "Publisher organization name"
+              }
+            },
+            "virtualNetworkType": {
+              "type": "string",
+              "defaultValue": "External",
+              "allowedValues": [
+                "None",
+                "External",
+                "Internal"
+              ],
+              "metadata": {
+                "description": "Virtual Network type"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Resource ID of the subnet for API Management"
+              }
+            },
+            "enableZones": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable zones for zone redundancy (Premium SKU only)"
+              }
+            },
+            "zones": {
+              "type": "array",
+              "defaultValue": [],
+              "metadata": {
+                "description": "Availability zones (Premium SKU only)"
+              }
+            },
+            "enableSystemIdentity": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable system-assigned managed identity"
+              }
+            },
+            "enableClientCertificate": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable client certificate for backend"
+              }
+            },
+            "customDomains": {
+              "type": "array",
+              "defaultValue": [],
+              "metadata": {
+                "description": "Custom domain configurations"
+              }
+            },
+            "tags": {
+              "type": "object",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Tags to apply to all resources"
+              }
+            },
+            "enableDiagnostics": {
+              "type": "bool",
+              "defaultValue": false,
+              "metadata": {
+                "description": "Enable diagnostic settings"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Log Analytics Workspace ID for diagnostics"
+              }
+            },
+            "minApiVersion": {
+              "type": "string",
+              "defaultValue": "1.2",
+              "allowedValues": [
+                "1.0",
+                "1.1",
+                "1.2"
+              ],
+              "metadata": {
+                "description": "Minimum TLS version"
+              }
+            },
+            "enableDeveloperPortal": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable developer portal"
+              }
+            },
+            "publicIpAddressIds": {
+              "type": "array",
+              "defaultValue": [],
+              "metadata": {
+                "description": "Public IP address IDs for Premium SKU"
+              }
+            }
+          },
+          "variables": {
+            "vnetConfiguration": "[if(and(not(equals(parameters('virtualNetworkType'), 'None')), not(empty(parameters('subnetId')))), createObject('subnetResourceId', parameters('subnetId')), null())]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ApiManagement/service",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[parameters('apimName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "[parameters('skuName')]",
+                "capacity": "[parameters('skuCapacity')]"
+              },
+              "zones": "[if(and(parameters('enableZones'), equals(parameters('skuName'), 'Premium')), parameters('zones'), null())]",
+              "identity": "[if(parameters('enableSystemIdentity'), createObject('type', 'SystemAssigned'), null())]",
+              "properties": {
+                "publisherEmail": "[parameters('publisherEmail')]",
+                "publisherName": "[parameters('publisherName')]",
+                "virtualNetworkType": "[parameters('virtualNetworkType')]",
+                "virtualNetworkConfiguration": "[variables('vnetConfiguration')]",
+                "customProperties": {
+                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "False",
+                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "False",
+                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "False",
+                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "False",
+                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "False",
+                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "False",
+                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2": "True"
+                },
+                "certificates": "[if(parameters('enableClientCertificate'), createArray(), null())]",
+                "hostnameConfigurations": "[if(not(empty(parameters('customDomains'))), parameters('customDomains'), null())]",
+                "publicIpAddressId": "[if(and(not(empty(parameters('publicIpAddressIds'))), equals(parameters('skuName'), 'Premium')), parameters('publicIpAddressIds')[0], null())]",
+                "enableClientCertificate": "[parameters('enableClientCertificate')]",
+                "disableGateway": false,
+                "apiVersionConstraint": {
+                  "minApiVersion": "[parameters('minApiVersion')]"
+                },
+                "publicNetworkAccess": "[if(equals(parameters('virtualNetworkType'), 'Internal'), 'Disabled', 'Enabled')]"
+              },
+              "metadata": {
+                "description": "API Management service"
+              }
+            },
+            {
+              "type": "Microsoft.ApiManagement/service/apis",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('apimName'), 'echo-api')]",
+              "properties": {
+                "displayName": "Echo API",
+                "description": "Echo API for testing",
+                "path": "echo",
+                "protocols": [
+                  "https"
+                ],
+                "serviceUrl": "https://echoapi.cloudapp.net/api",
+                "subscriptionRequired": true,
+                "isCurrent": true
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+              ],
+              "metadata": {
+                "description": "Default Echo API (built-in)"
+              }
+            },
+            {
+              "type": "Microsoft.ApiManagement/service/products",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('apimName'), 'starter')]",
+              "properties": {
+                "displayName": "Starter",
+                "description": "Starter product for developers",
+                "subscriptionRequired": true,
+                "approvalRequired": false,
+                "state": "published",
+                "subscriptionsLimit": 1
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+              ],
+              "metadata": {
+                "description": "Starter product"
+              }
+            },
+            {
+              "type": "Microsoft.ApiManagement/service/products",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('apimName'), 'unlimited')]",
+              "properties": {
+                "displayName": "Unlimited",
+                "description": "Unlimited product for internal use",
+                "subscriptionRequired": true,
+                "approvalRequired": true,
+                "state": "published",
+                "subscriptionsLimit": 1
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+              ],
+              "metadata": {
+                "description": "Unlimited product"
+              }
+            },
+            {
+              "type": "Microsoft.ApiManagement/service/products/apis",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}/{2}', parameters('apimName'), 'starter', 'echo-api')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), 'echo-api')]",
+                "[resourceId('Microsoft.ApiManagement/service/products', parameters('apimName'), 'starter')]"
+              ],
+              "metadata": {
+                "description": "Link Echo API to Starter product"
+              }
+            },
+            {
+              "type": "Microsoft.ApiManagement/service/products/apis",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}/{2}', parameters('apimName'), 'unlimited', 'echo-api')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), 'echo-api')]",
+                "[resourceId('Microsoft.ApiManagement/service/products', parameters('apimName'), 'unlimited')]"
+              ],
+              "metadata": {
+                "description": "Link Echo API to Unlimited product"
+              }
+            },
+            {
+              "type": "Microsoft.ApiManagement/service/apis/policies",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}/{2}', parameters('apimName'), 'echo-api', 'policy')]",
+              "properties": {
+                "value": "      <policies>\r\n        <inbound>\r\n          <base />\r\n          <set-header name=\"X-Powered-By\" exists-action=\"delete\" />\r\n          <set-header name=\"X-AspNet-Version\" exists-action=\"delete\" />\r\n        </inbound>\r\n        <backend>\r\n          <base />\r\n        </backend>\r\n        <outbound>\r\n          <base />\r\n        </outbound>\r\n        <on-error>\r\n          <base />\r\n        </on-error>\r\n      </policies>\r\n    ",
+                "format": "xml"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), 'echo-api')]"
+              ],
+              "metadata": {
+                "description": "All APIs policy"
+              }
+            },
+            {
+              "type": "Microsoft.ApiManagement/service/namedValues",
+              "apiVersion": "2023-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('apimName'), 'backend-url')]",
+              "properties": {
+                "displayName": "backend-url",
+                "value": "https://api.example.com",
+                "secret": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+              ],
+              "metadata": {
+                "description": "Named value for backend URL"
+              }
+            },
+            {
+              "condition": "[and(parameters('enableDiagnostics'), not(empty(parameters('logAnalyticsWorkspaceId'))))]",
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.ApiManagement/service/{0}', parameters('apimName'))]",
+              "name": "[format('{0}-diagnostics', parameters('apimName'))]",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  },
+                  {
+                    "categoryGroup": "audit",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "enabled": false,
+                      "days": 0
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+              ],
+              "metadata": {
+                "description": "Diagnostic settings for API Management"
+              }
+            }
+          ],
+          "outputs": {
+            "apimId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the API Management service"
+              },
+              "value": "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            },
+            "apimName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the API Management service"
+              },
+              "value": "[parameters('apimName')]"
+            },
+            "gatewayUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "The gateway URL of the API Management service"
+              },
+              "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview').gatewayUrl]"
+            },
+            "developerPortalUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "The developer portal URL"
+              },
+              "value": "[if(parameters('enableDeveloperPortal'), reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview').developerPortalUrl, '')]"
+            },
+            "managementApiUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "The management API URL"
+              },
+              "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview').managementApiUrl]"
+            },
+            "portalUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "The portal URL"
+              },
+              "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview').portalUrl]"
+            },
+            "scmUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "The SCM URL"
+              },
+              "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview').scmUrl]"
+            },
+            "identityPrincipalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The principal ID of the system-assigned managed identity"
+              },
+              "value": "[if(parameters('enableSystemIdentity'), reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview', 'full').identity.principalId, '')]"
+            },
+            "identityTenantId": {
+              "type": "string",
+              "metadata": {
+                "description": "The tenant ID of the system-assigned managed identity"
+              },
+              "value": "[if(parameters('enableSystemIdentity'), reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview', 'full').identity.tenantId, '')]"
+            },
+            "publicIpAddresses": {
+              "type": "array",
+              "metadata": {
+                "description": "The public IP addresses"
+              },
+              "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview').publicIPAddresses]"
+            },
+            "privateIpAddresses": {
+              "type": "array",
+              "metadata": {
+                "description": "The private IP addresses"
+              },
+              "value": "[if(not(equals(parameters('virtualNetworkType'), 'None')), reference(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '2023-05-01-preview').privateIPAddresses, createArray())]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName')))))]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+      ],
+      "metadata": {
+        "description": "Deploy API Management with VNet integration"
+      }
+    }
+  ],
+  "outputs": {
+    "resourceGroupId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Resource Group"
+      },
+      "value": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Resource Group"
+      },
+      "value": "[variables('resourceGroupName')]"
+    },
+    "vnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Virtual Network"
+      },
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.vnetId.value]"
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Virtual Network"
+      },
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.vnetName.value]"
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The address prefix of the Virtual Network"
+      },
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.vnetAddressPrefix.value]"
+    },
+    "subnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Subnet"
+      },
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.subnetId.value]"
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Subnet"
+      },
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.subnetName.value]"
+    },
+    "nsgId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Network Security Group"
+      },
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.nsgId.value]"
+    },
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Network Security Group"
+      },
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('networkDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.nsgName.value]"
+    },
+    "cosmosDbAccountId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Cosmos DB account"
+      },
+      "value": "[if(parameters('deployCosmosDb'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('cosmosDbDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.cosmosDbAccountId.value, '')]"
+    },
+    "cosmosDbAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Cosmos DB account"
+      },
+      "value": "[if(parameters('deployCosmosDb'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('cosmosDbDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.cosmosDbAccountName.value, '')]"
+    },
+    "cosmosDbEndpoint": {
+      "type": "string",
+      "metadata": {
+        "description": "The endpoint of the Cosmos DB account"
+      },
+      "value": "[if(parameters('deployCosmosDb'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('cosmosDbDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.cosmosDbEndpoint.value, '')]"
+    },
+    "cosmosDbDatabaseId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Cosmos DB database"
+      },
+      "value": "[if(parameters('deployCosmosDb'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('cosmosDbDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.databaseId.value, '')]"
+    },
+    "cosmosDbDatabaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Cosmos DB database"
+      },
+      "value": "[if(parameters('deployCosmosDb'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('cosmosDbDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.databaseName.value, '')]"
+    },
+    "serviceBusNamespaceId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Service Bus namespace"
+      },
+      "value": "[if(parameters('deployServiceBus'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('serviceBusDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.serviceBusNamespaceId.value, '')]"
+    },
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Service Bus namespace"
+      },
+      "value": "[if(parameters('deployServiceBus'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('serviceBusDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.serviceBusNamespaceName.value, '')]"
+    },
+    "serviceBusEndpoint": {
+      "type": "string",
+      "metadata": {
+        "description": "The endpoint of the Service Bus namespace"
+      },
+      "value": "[if(parameters('deployServiceBus'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('serviceBusDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.serviceBusEndpoint.value, '')]"
+    },
+    "serviceBusQueueNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of Service Bus queue names"
+      },
+      "value": "[if(parameters('deployServiceBus'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('serviceBusDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.queueNames.value, createArray())]"
+    },
+    "serviceBusTopicNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of Service Bus topic names"
+      },
+      "value": "[if(parameters('deployServiceBus'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('serviceBusDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.topicNames.value, createArray())]"
+    },
+    "sqlServerId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the SQL Server"
+      },
+      "value": "[if(parameters('deploySqlServer'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('sqlServerDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.sqlServerId.value, '')]"
+    },
+    "sqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the SQL Server"
+      },
+      "value": "[if(parameters('deploySqlServer'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('sqlServerDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.sqlServerName.value, '')]"
+    },
+    "sqlServerFqdn": {
+      "type": "string",
+      "metadata": {
+        "description": "The fully qualified domain name of the SQL Server"
+      },
+      "value": "[if(parameters('deploySqlServer'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('sqlServerDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.sqlServerFqdn.value, '')]"
+    },
+    "sqlDatabaseNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of SQL database names"
+      },
+      "value": "[if(parameters('deploySqlServer'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('sqlServerDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.databaseNames.value, createArray())]"
+    },
+    "sqlDatabaseIds": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of SQL database resource IDs"
+      },
+      "value": "[if(parameters('deploySqlServer'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('sqlServerDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.databaseIds.value, createArray())]"
+    },
+    "appGatewayId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Application Gateway"
+      },
+      "value": "[if(parameters('deployAppGateway'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.appGatewayId.value, '')]"
+    },
+    "appGatewayName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Application Gateway"
+      },
+      "value": "[if(parameters('deployAppGateway'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.appGatewayName.value, '')]"
+    },
+    "appGatewayPublicIp": {
+      "type": "string",
+      "metadata": {
+        "description": "The public IP address of the Application Gateway"
+      },
+      "value": "[if(parameters('deployAppGateway'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.publicIpAddress.value, '')]"
+    },
+    "appGatewayFqdn": {
+      "type": "string",
+      "metadata": {
+        "description": "The FQDN of the Application Gateway"
+      },
+      "value": "[if(parameters('deployAppGateway'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.fqdn.value, '')]"
+    },
+    "appGatewayIdentityId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Application Gateway managed identity"
+      },
+      "value": "[if(parameters('deployAppGateway'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('appGatewayDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.identityId.value, '')]"
+    },
+    "aksClusterId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the AKS cluster"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.aksClusterId.value, '')]"
+    },
+    "aksClusterName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the AKS cluster"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.aksClusterName.value, '')]"
+    },
+    "aksClusterFqdn": {
+      "type": "string",
+      "metadata": {
+        "description": "The FQDN of the AKS cluster"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.aksClusterFqdn.value, '')]"
+    },
+    "kubernetesVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The Kubernetes version"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.kubernetesVersion.value, '')]"
+    },
+    "aksIdentityPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "The principal ID of the AKS cluster managed identity"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.identityPrincipalId.value, '')]"
+    },
+    "aksNodeResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The node resource group name"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.nodeResourceGroup.value, '')]"
+    },
+    "agicIdentityObjectId": {
+      "type": "string",
+      "metadata": {
+        "description": "The AGIC addon identity object ID"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.agicIdentityObjectId.value, '')]"
+    },
+    "agicIdentityClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "The AGIC addon identity client ID"
+      },
+      "value": "[if(parameters('deployAKS'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('aksDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.agicIdentityClientId.value, '')]"
+    },
+    "apimId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the API Management service"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.apimId.value, '')]"
+    },
+    "apimName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the API Management service"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.apimName.value, '')]"
+    },
+    "apimGatewayUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The gateway URL of the API Management service"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.gatewayUrl.value, '')]"
+    },
+    "apimDeveloperPortalUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The developer portal URL"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.developerPortalUrl.value, '')]"
+    },
+    "apimManagementApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The management API URL"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.managementApiUrl.value, '')]"
+    },
+    "apimPortalUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The portal URL"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.portalUrl.value, '')]"
+    },
+    "apimIdentityPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "The principal ID of the API Management managed identity"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.identityPrincipalId.value, '')]"
+    },
+    "apimPublicIpAddresses": {
+      "type": "array",
+      "metadata": {
+        "description": "The public IP addresses of API Management"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.publicIpAddresses.value, createArray())]"
+    },
+    "apimPrivateIpAddresses": {
+      "type": "array",
+      "metadata": {
+        "description": "The private IP addresses of API Management"
+      },
+      "value": "[if(parameters('deployApiManagement'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', format('apimDeployment-{0}', uniqueString(subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))))), '2025-04-01').outputs.privateIpAddresses.value, createArray())]"
+    }
+  }
+}

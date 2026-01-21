@@ -84,13 +84,8 @@ param enableDiagnostics bool = false
 @description('Log Analytics Workspace ID for diagnostics')
 param logAnalyticsWorkspaceId string = ''
 
-@description('Minimum TLS version')
-@allowed([
-  '1.0'
-  '1.1'
-  '1.2'
-])
-param minApiVersion string = '1.2'
+@description('Minimum API version. Use empty string for no restriction or date format yyyy-mm-dd')
+param minApiVersion string = ''
 
 @description('Enable developer portal')
 param enableDeveloperPortal bool = true
@@ -140,11 +135,11 @@ resource apiManagement 'Microsoft.ApiManagement/service@2023-05-01-preview' = {
     certificates: enableClientCertificate ? [] : null
     hostnameConfigurations: !empty(customDomains) ? customDomains : null
     publicIpAddressId: !empty(publicIpAddressIds) && skuName == 'Premium' ? publicIpAddressIds[0] : null
-    enableClientCertificate: enableClientCertificate
+    enableClientCertificate: skuName == 'Developer' ? null : enableClientCertificate
     disableGateway: false
-    apiVersionConstraint: {
+    apiVersionConstraint: !empty(minApiVersion) ? {
       minApiVersion: minApiVersion
-    }
+    } : {}
     publicNetworkAccess: virtualNetworkType == 'Internal' ? 'Disabled' : 'Enabled'
   }
 }
