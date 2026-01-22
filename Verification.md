@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-All required Azure resources have been successfully designed, configured, and validated in the Bicep infrastructure. The deployment includes 9 core services across compute, networking, database, messaging, and integration layers, all properly integrated with Virtual Network for secure communication.
+All required Azure resources have been successfully designed, configured, and validated in the Bicep infrastructure. The deployment includes 11 core services across compute, networking, database, messaging, and integration layers, all properly integrated with Virtual Network for secure communication.
 
 ---
 
@@ -182,6 +182,51 @@ All required Azure resources have been successfully designed, configured, and va
   - ✅ Transparent Data Encryption (TDE) enabled
   - ✅ Automated backups configured
   - ✅ Point-in-time restore available
+
+---
+
+### 10. ✅ **Azure Container Registry (ACR)**
+- **Module**: `modules/compute/acr.bicep`
+- **Status**: ✅ Validated
+- **Configuration**:
+  - SKU: Standard (dev), Premium (prod)
+  - Admin User: Disabled (best practice)
+  - Public Access: Enabled (dev), Disabled (prod)
+  - Zone Redundancy: Premium SKU only
+- **Security Features**:
+  - ✅ System-assigned managed identity
+  - ✅ Azure RBAC for access control
+  - ✅ Content trust for image signing (Premium)
+  - ✅ Retention policy for untagged manifests (Premium)
+- **Integration**:
+  - ✅ Private endpoint enabled (prod with Premium SKU)
+  - ✅ Connected to application subnet
+  - ✅ Accessible by AKS for image pulls
+
+---
+
+### 11. ✅ **DevOps Runner VM**
+- **Module**: `modules/compute/vm.bicep`
+- **Status**: ✅ Validated
+- **Configuration**:
+  - VM Size: Standard_D4s_v3 (4 vCPU, 16 GB RAM)
+  - OS Type: Linux (Ubuntu 22.04 LTS) or Windows Server 2022
+  - OS Disk: 128 GB Premium SSD (dev), 256 GB (prod)
+  - Data Disk: 256 GB (dev), 512 GB (prod)
+- **Security Features**:
+  - ✅ System-assigned managed identity
+  - ✅ Trusted Launch with Secure Boot and vTPM
+  - ✅ Private IP only (no public IP by default)
+  - ✅ NSG integration for network security
+  - ✅ Automatic OS patching enabled
+- **DevOps Integration**:
+  - ✅ Azure DevOps agent auto-installation via VM extension
+  - ✅ Configurable agent pool assignment
+  - ✅ PAT-based authentication support
+- **Integration**:
+  - ✅ Deployed in application subnet
+  - ✅ Can access ACR, AKS, and other VNet resources
+  - ✅ Boot diagnostics enabled
 
 ---
 

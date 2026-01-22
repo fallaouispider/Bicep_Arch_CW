@@ -193,6 +193,38 @@ param apimPublisherName = 'Contoso Dev'
 param apimVirtualNetworkType = 'External'
 
 // =========================================
+// AZURE CONTAINER REGISTRY CONFIGURATION
+// =========================================
+
+param deployACR = true
+param acrSku = 'Standard'
+param enableAcrAdminUser = false
+param enableAcrPrivateEndpoint = false
+param acrPublicNetworkAccess = true
+param acrRetentionDays = 7
+param enableAcrZoneRedundancy = false
+
+// =========================================
+// DEVOPS RUNNER VM CONFIGURATION
+// =========================================
+
+param deployDevOpsVM = true
+param devOpsVmSize = 'Standard_D4s_v3'
+param devOpsVmOsType = 'Linux'
+param devOpsVmAdminUsername = 'azureuser'
+// IMPORTANT: Set password via command line: --parameters devOpsVmAdminPassword='YourSecurePassword123!'
+param devOpsVmAdminPassword = '' // Must be provided at deployment time
+param devOpsVmSshPublicKey = '' // Optional: Set SSH public key for Linux VM
+param enableDevOpsVmPublicIp = false
+param devOpsVmOsDiskSizeGB = 128
+param enableDevOpsVmDataDisk = true
+param devOpsVmDataDiskSizeGB = 256
+// IMPORTANT: Configure Azure DevOps settings if you want to auto-register the agent
+param devOpsOrgUrl = '' // e.g., https://dev.azure.com/yourorg
+param devOpsPat = '' // Azure DevOps Personal Access Token
+param devOpsPoolName = 'Default'
+
+// =========================================
 // RESOURCE TAGGING
 // =========================================
 

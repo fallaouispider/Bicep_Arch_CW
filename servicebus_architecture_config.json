@@ -1,0 +1,2329 @@
+{
+  "queues": {
+    "export-jobs": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "lockDuration": "PT1M",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "deadLetteringOnMessageExpiration": false,
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "requiresSession": false,
+      "maxDeliveryCount": 10,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "forwardTo": null,
+      "forwardDeadLetteredMessagesTo": null,
+      "status": "Active"
+    },
+    "export-local-jobs": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "lockDuration": "PT1M",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "deadLetteringOnMessageExpiration": false,
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "requiresSession": false,
+      "maxDeliveryCount": 10,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "forwardTo": null,
+      "forwardDeadLetteredMessagesTo": null,
+      "status": "Active"
+    },
+    "optitime-queue": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "lockDuration": "PT1M",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "deadLetteringOnMessageExpiration": false,
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "requiresSession": false,
+      "maxDeliveryCount": 10,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "forwardTo": null,
+      "forwardDeadLetteredMessagesTo": null,
+      "status": "Active"
+    },
+    "status-tracking-queue": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "lockDuration": "PT1M",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "deadLetteringOnMessageExpiration": false,
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "requiresSession": false,
+      "maxDeliveryCount": 10,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "forwardTo": null,
+      "forwardDeadLetteredMessagesTo": null,
+      "status": "Active"
+    },
+    "status-tracking-queue_tmp": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "lockDuration": "PT1M",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "deadLetteringOnMessageExpiration": false,
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "requiresSession": false,
+      "maxDeliveryCount": 10,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "forwardTo": null,
+      "forwardDeadLetteredMessagesTo": null,
+      "status": "Active"
+    },
+    "testqueue-mi": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "lockDuration": "PT1M",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "deadLetteringOnMessageExpiration": false,
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "requiresSession": false,
+      "maxDeliveryCount": 10,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "forwardTo": null,
+      "forwardDeadLetteredMessagesTo": null,
+      "status": "Active"
+    }
+  },
+  "topics": {
+    "absence-autorisation": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "disciplinary-measures": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "changefeed-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "changefeed-subscription": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "delegation-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "delegation-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "doc-gen-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "doc-gen-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "doc-gen-local-topic1": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "doc-gen-local-sub1": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "document-generation-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "document-generation-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "document-template-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "document-template-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "document-template-topic-local": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "document-template-sub-local": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "document-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "document-generation-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "email-notification-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "email-notification-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "email-sms-notifications-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "email-sms-notifications-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "employee-assignments-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "employee-assignments-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "notification-signalr": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {}
+    },
+    "notification-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "notification-signalr": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "nurse-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "nurse-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "nurse-topic-local": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "nurse-sub-local": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "nurse2": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "operator-management-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P14D",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": false,
+      "status": "Active",
+      "subscriptions": {
+        "operator-management-subscription": {
+          "defaultMessageTimeToLive": "P14D",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": false,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675198DT2H48M5S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "operator_skills_topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "operator_skills_subscription": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "operator_updates-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "operator_updates-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "optitime": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "optitime-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "optitime-fus": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "overtime-to-workplan-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "overtime-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "pickup-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "pickup-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "pickup-station-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "pickup-station-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "plannedtlo-events": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "plannedtlo-events": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "replacement-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "replacement-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "replacementservice": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "replacementservice": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "request-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "request-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "request-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "request-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "requests": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P14D",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": false,
+      "status": "Active",
+      "subscriptions": {
+        "requestservice": {
+          "defaultMessageTimeToLive": "P14D",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": false,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675198DT2H48M5.477S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "shiftdocuments-events": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {}
+    },
+    "shifttype-events": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {}
+    },
+    "skillsmatrix": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "skillsmatrix-service": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "status-events": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "status-events-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "status-tracking-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "status-tracking-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "terminalbus-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {}
+    },
+    "terminalbus-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "nest-js-projector-subscription": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "terminalBus-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "test-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "test-subscription": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "test-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "topic-over-time": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "topic-over-time": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "topic-over-time-toworkplan": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {}
+    },
+    "training-process-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "training-process-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "versality-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "training-process-topic-local": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "training-process-sub-local": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "versality-sub-local": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "transport-plan-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "transport-plan-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "versality-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "versality-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-engine-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "workflow-engine-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-engine-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "workflow-engine-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-events": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "workflow-events-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-failures": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "workflow-failures": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "workflow-start-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-local-v1": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "sub-1": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-notification-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "workflow-notification-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflow-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "document-template-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "workflow-escalation-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "workflow-start-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workflows": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P14D",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": false,
+      "status": "Active",
+      "subscriptions": {
+        "escalation.push": {
+          "defaultMessageTimeToLive": "P14D",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": false,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675198DT2H48M5S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        },
+        "workflow-start": {
+          "defaultMessageTimeToLive": "P14D",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": false,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675198DT2H48M5S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    },
+    "workstation-changes-local-topic": {
+      "maxSizeInMegabytes": 1024,
+      "maxMessageSizeInKilobytes": 1024,
+      "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+      "duplicateDetectionHistoryTimeWindow": "PT10M",
+      "enableBatchedOperations": true,
+      "enablePartitioning": false,
+      "enableExpress": false,
+      "requiresDuplicateDetection": false,
+      "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+      "supportOrdering": true,
+      "status": "Active",
+      "subscriptions": {
+        "workstation-changes-local-sub": {
+          "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+          "lockDuration": "PT1M",
+          "deadLetteringOnMessageExpiration": false,
+          "deadLetteringOnFilterEvaluationExceptions": true,
+          "enableBatchedOperations": true,
+          "maxDeliveryCount": 10,
+          "requiresSession": false,
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "forwardTo": null,
+          "forwardDeadLetteredMessagesTo": null,
+          "status": "Active",
+          "rules": [
+            {
+              "name": "$Default",
+              "filterType": "SqlFilter",
+              "sqlFilter": {
+                "compatibilityLevel": 20,
+                "sqlExpression": "1=1"
+              },
+              "correlationFilter": null,
+              "action": {}
+            }
+          ]
+        }
+      }
+    }
+  }
+}

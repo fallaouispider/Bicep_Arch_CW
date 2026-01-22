@@ -16,6 +16,8 @@ This project deploys a complete Azure networking infrastructure with:
 - **Application Gateway v2** - Layer 7 load balancer with Web Application Firewall (WAF) support
 - **Azure Kubernetes Service (AKS)** - Managed Kubernetes cluster with AGIC addon for ingress
 - **API Management** - Developer Tier API gateway with VNet integration for API management and security
+- **Azure Container Registry (ACR)** - Container registry for Docker images with private endpoint support
+- **DevOps Runner VM** - Virtual machine for Azure DevOps pipeline agents with managed identity
 
 ## 🏗️ Architecture
 
@@ -76,11 +78,26 @@ Subscription
         ├── VNet Integration (External mode)
         ├── Gateway URL (public or private)
         ├── Developer Portal
-        ├── Built-in APIs (Echo API)
-        ├── Products (Starter, Unlimited)
-        ├── Policies (Security headers, CORS)
+        ├── Management API
+        └── System-Assigned Managed Identity
+    └── Azure Container Registry (acr{workload}{env}{region}{instance})
+        ├── Standard or Premium SKU
+        ├── Admin User (optional)
+        ├── Private Endpoint (Premium SKU)
+        ├── Geo-Replication (Premium SKU)
+        ├── Zone Redundancy (Premium SKU)
+        ├── Content Trust & Quarantine (Premium SKU)
+        └── System-Assigned Managed Identity
+    └── DevOps Runner VM (vm-devops-{workload}-{env}-{region}-{instance})
+        ├── Standard_D4s_v3 (configurable)
+        ├── Linux or Windows OS
         ├── System-Assigned Managed Identity
-        └── TLS 1.2+ enforced
+        ├── Premium SSD OS Disk (128 GB)
+        ├── Data Disk (256 GB, optional)
+        ├── Network Interface (private IP)
+        ├── Public IP (optional)
+        ├── Azure DevOps Agent (auto-installed)
+        └── Boot Diagnostics
 ```
 
 ### Address Space Planning
@@ -109,8 +126,12 @@ Bicep_Arch_CW/
 │   │   └── sqlserver.bicep    # Azure SQL Server with databases module
 │   ├── messaging/
 │   │   └── servicebus.bicep   # Service Bus Standard Tier module
-│   └── compute/
-│       └── aks.bicep          # Azure Kubernetes Service with AGIC addon
+│   ├── compute/
+│   │   ├── aks.bicep          # Azure Kubernetes Service with AGIC addon
+│   │   ├── acr.bicep          # Azure Container Registry module
+│   │   └── vm.bicep           # Virtual Machine for DevOps runners
+│   └── integration/
+│       └── apim.bicep         # API Management module
 └── README.md                   # This file
 ```
 
@@ -504,6 +525,62 @@ param apimVirtualNetworkType = 'External'  // None, External, or Internal
 - Named values for configuration management
 - Version sets for API versioning
 - Application Insights integration
+
+#### Configure Azure Container Registry
+
+Deploy ACR for container image storage:
+
+```bicep
+param deployACR = true
+param acrSku = 'Premium'  // Basic, Standard, or Premium
+param enableAcrAdminUser = false  // Enable admin user for simple scenarios
+param enableAcrPrivateEndpoint = true  // Requires Premium SKU
+param acrPublicNetworkAccess = false  // Disable public access for security
+param acrRetentionDays = 30  // Image retention policy (Premium only)
+param enableAcrZoneRedundancy = true  // Zone redundancy (Premium only)
+```
+
+**ACR SKU Comparison:**
+- **Basic**: 10 GB storage, 10 webhooks, suitable for learning/testing
+- **Standard**: 100 GB storage, 100 webhooks, production-ready
+- **Premium**: 500 GB storage, 500 webhooks, geo-replication, private endpoints, zone redundancy
+
+**Features:**
+- Content trust for image signing (Premium)
+- Retention policies for untagged manifests (Premium)
+- Quarantine policy for image scanning (Premium)
+- Anonymous pull access (optional)
+- Azure RBAC for fine-grained access control
+- System-assigned managed identity
+
+#### Configure DevOps Runner VM
+
+Deploy VM for Azure DevOps pipeline agents:
+
+```bicep
+param deployDevOpsVM = true
+param devOpsVmSize = 'Standard_D4s_v3'  // 4 vCPU, 16 GB RAM
+param devOpsVmOsType = 'Linux'  // Linux or Windows
+param devOpsVmAdminUsername = 'azureuser'
+param devOpsVmAdminPassword = ''  // Set via command line
+param devOpsVmSshPublicKey = ''  // Optional SSH key for Linux
+param enableDevOpsVmPublicIp = false  // Usually false for security
+param devOpsVmOsDiskSizeGB = 256  // OS disk size
+param enableDevOpsVmDataDisk = true  // Additional storage
+param devOpsVmDataDiskSizeGB = 512  // Data disk size
+param devOpsOrgUrl = 'https://dev.azure.com/yourorg'  // DevOps organization
+param devOpsPat = ''  // Personal Access Token (set securely)
+param devOpsPoolName = 'Production'  // Agent pool name
+```
+
+**VM Features:**
+- System-assigned managed identity for Azure resource access
+- Trusted Launch with Secure Boot and vTPM
+- Automatic OS patching
+- Boot diagnostics enabled
+- Azure DevOps agent auto-installation
+- Premium SSD for optimal performance
+- Integration with VNet NSG for security
 
 #### Configure Application Gateway
 

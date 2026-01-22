@@ -222,6 +222,83 @@ param apimPublisherName string = 'Contoso'
 ])
 param apimVirtualNetworkType string = 'External'
 
+@description('Deploy Azure Container Registry')
+param deployACR bool = true
+
+@description('ACR SKU tier')
+@allowed([
+  'Basic'
+  'Standard'
+  'Premium'
+])
+param acrSku string = 'Standard'
+
+@description('Enable admin user for ACR')
+param enableAcrAdminUser bool = false
+
+@description('Enable private endpoint for ACR')
+param enableAcrPrivateEndpoint bool = false
+
+@description('Enable public network access for ACR')
+param acrPublicNetworkAccess bool = true
+
+@description('ACR retention policy in days (Premium only)')
+@minValue(0)
+@maxValue(365)
+param acrRetentionDays int = 7
+
+@description('Enable ACR zone redundancy (Premium only)')
+param enableAcrZoneRedundancy bool = false
+
+@description('Deploy DevOps Runner VM')
+param deployDevOpsVM bool = true
+
+@description('DevOps VM size')
+param devOpsVmSize string = 'Standard_D4s_v3'
+
+@description('DevOps VM OS type')
+@allowed([
+  'Windows'
+  'Linux'
+])
+param devOpsVmOsType string = 'Linux'
+
+@description('DevOps VM admin username')
+param devOpsVmAdminUsername string = 'azureuser'
+
+@description('DevOps VM admin password')
+@secure()
+param devOpsVmAdminPassword string
+
+@description('SSH public key for Linux DevOps VM')
+param devOpsVmSshPublicKey string = ''
+
+@description('Enable public IP for DevOps VM')
+param enableDevOpsVmPublicIp bool = false
+
+@description('DevOps VM OS disk size in GB')
+@minValue(30)
+@maxValue(4095)
+param devOpsVmOsDiskSizeGB int = 128
+
+@description('Enable data disk for DevOps VM')
+param enableDevOpsVmDataDisk bool = true
+
+@description('DevOps VM data disk size in GB')
+@minValue(1)
+@maxValue(32767)
+param devOpsVmDataDiskSizeGB int = 256
+
+@description('Azure DevOps organization URL')
+param devOpsOrgUrl string = ''
+
+@description('Azure DevOps PAT token')
+@secure()
+param devOpsPat string = ''
+
+@description('Azure DevOps agent pool name')
+param devOpsPoolName string = 'Default'
+
 // =========================================
 // VARIABLES
 // =========================================
@@ -252,6 +329,8 @@ var appGatewayPublicIpName = 'pip-appgw-${workloadName}-${environmentType}-${loc
 var aksClusterName = 'aks-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
 var aksDnsPrefix = '${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
 var apimName = 'apim-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
+var acrName = 'acr${workloadName}${environmentType}${locationShort}${instanceNumber}'
+var devOpsVmName = 'vm-devops-${workloadName}-${environmentType}-${locationShort}-${instanceNumber}'
 
 // Merge default tags with user-provided tags
 var defaultTags = {
@@ -581,3 +660,79 @@ output apimPublicIpAddresses array = deployApiManagement ? apimModule.outputs.pu
 
 @description('The private IP addresses of API Management')
 output apimPrivateIpAddresses array = deployApiManagement ? apimModule.outputs.privateIpAddresses : []
+
+@description('Deploy Azure Container Registry')
+module acrModule 'modules/compute/acr.bicep' = if (deployACR) {
+  name: 'acrDeployment-${uniqueString(resourceGroup.id)}'
+  scope: resourceGroup
+  dependsOn: [
+    networkModule
+  ]
+  params: {
+    acrName: acrName
+    location: location
+    acrSku: acrSku
+    enableAdminUser: enableAcrAdminUser
+    publicNetworkAccess: acrPublicNetworkAccess
+    subnetId: networkModule.outputs.subnetId
+    enablePrivateEndpoint: enableAcrPrivateEndpoint
+    tags: allTags
+    zoneRedundancy: enableAcrZoneRedundancy
+    retentionDays: acrRetentionDays
+  }
+}
+
+@description('Deploy DevOps Runner VM')
+module devOpsVmModule 'modules/compute/vm.bicep' = if (deployDevOpsVM) {
+  name: 'devOpsVmDeployment-${uniqueString(resourceGroup.id)}'
+  scope: resourceGroup
+  dependsOn: [
+    networkModule
+  ]
+  params: {
+    vmName: devOpsVmName
+    location: location
+    vmSize: devOpsVmSize
+    osType: devOpsVmOsType
+    adminUsername: devOpsVmAdminUsername
+    adminPassword: devOpsVmAdminPassword
+    sshPublicKey: devOpsVmSshPublicKey
+    subnetId: networkModule.outputs.subnetId
+    enablePublicIp: enableDevOpsVmPublicIp
+    tags: allTags
+    osDiskSizeGB: devOpsVmOsDiskSizeGB
+    enableDataDisk: enableDevOpsVmDataDisk
+    dataDiskSizeGB: devOpsVmDataDiskSizeGB
+    networkSecurityGroupId: networkModule.outputs.nsgId
+    devOpsOrgUrl: devOpsOrgUrl
+    devOpsPat: devOpsPat
+    devOpsPoolName: devOpsPoolName
+  }
+}
+
+@description('The resource ID of the Azure Container Registry')
+output acrId string = deployACR ? acrModule.outputs.acrId : ''
+
+@description('The name of the Azure Container Registry')
+output acrName string = deployACR ? acrModule.outputs.acrName : ''
+
+@description('The login server of the Azure Container Registry')
+output acrLoginServer string = deployACR ? acrModule.outputs.acrLoginServer : ''
+
+@description('The principal ID of the ACR managed identity')
+output acrPrincipalId string = deployACR ? acrModule.outputs.acrPrincipalId : ''
+
+@description('The resource ID of the DevOps VM')
+output devOpsVmId string = deployDevOpsVM ? devOpsVmModule.outputs.vmId : ''
+
+@description('The name of the DevOps VM')
+output devOpsVmName string = deployDevOpsVM ? devOpsVmModule.outputs.vmName : ''
+
+@description('The principal ID of the DevOps VM managed identity')
+output devOpsVmPrincipalId string = deployDevOpsVM ? devOpsVmModule.outputs.vmPrincipalId : ''
+
+@description('The private IP address of the DevOps VM')
+output devOpsVmPrivateIp string = deployDevOpsVM ? devOpsVmModule.outputs.privateIpAddress : ''
+
+@description('The public IP address of the DevOps VM')
+output devOpsVmPublicIp string = deployDevOpsVM ? devOpsVmModule.outputs.publicIpAddress : ''
